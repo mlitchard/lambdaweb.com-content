@@ -1,6 +1,22 @@
+Fizzbuzz is a chance to examine contemporary Haskell
+
+This blog post is for people who have seen a bit of Haskell; maybe have read
+some (Learn You A Haskell)[http://learnyouahaskell.com/], and appreciate 
+seeing the building process in action. I spend a considerable amount of time
+in ghci, because I find it useful as a development tool. The first thing
+to do is install stack, then we'll get right into ghci and start unpacking
+fizzbuzz.
+
+To follow along, you'll want to 
 ```
 stack ghci
 ```
+```
+*FizzBuzz> ["fizz " | 15 `mod` 3 == 0]
+["fizz "]
+
+```
+
 ```
 Prelude> (\i -> ["fizz " | i `mod` 3 == 0]) 15
 ["fizz "]
