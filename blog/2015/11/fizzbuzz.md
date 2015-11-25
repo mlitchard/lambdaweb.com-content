@@ -16,7 +16,7 @@ some [Learn You A Haskell](http://learnyouahaskell.com/), and appreciate
 seeing the building process in action. 
 
 
-## [Part I](/fiz_1)
+## [Part I](/blog/2015/11/fiz_1)
  The first thing to do is install stack
 k, then we'll get right into ghci and start unpacking
 fizzbuzz.
