@@ -2,8 +2,8 @@
 
 Now we can get to it. The first thing I wanted to play with, was examining the
 reason as to why we need monad comprehensions. Why not plain list
-comprehensions. I'll build up to answering this question slowly. First
-let's get a reminder of what list comprehensions are for. I hardly ever
+comprehensions? I'll build up to answering this question slowly. First
+let's get a reminder of what list comprehensions are for, because I hardly ever
 use them. Here's what [wikipedia](https://en.wikipedia.org/wiki/List_comprehension) has to say:
 
 > A list comprehension is a syntactic construct available in some programming
@@ -21,7 +21,7 @@ So in the case of what we'd be looking for in a fizzbuzz program:
 But this only checks the number 15. Using a lambda (anaonymous) function,
 we can generalize to check for any arbitrary number.
 ```
-Prelude> (\i -> ["fizz " | i `mod` 3 == 0]) 15
+*FizzBuzz> (\i -> ["fizz " | i `mod` 3 == 0]) 15
 ["fizz "]
 ```
 This is as no suprise to experienced programmers, but there
@@ -30,20 +30,54 @@ We'll cover that later. For now, another anonymous function
 for our fizzbuzz program. This time checking for numbers divisable by 5.
 
 ```
-Prelude> (\i -> ["buzz " | i `mod` 5 == 0]) 11
+*FizzBuzz> (\i -> ["buzz " | i `mod` 5 == 0]) 11
 []
 ```
+That empty list will prove to be a problem, we'll have to come up with
+a better way to represent failure. For now, let's bind these functions
+to names.
+```
+*FizzBuzz> let fizz3 = (\i -> ["fizz " | i `mod` 3 == 0])
+*FizzBuzz> let buzz5 = (\i -> ["buzz " | i `mod` 5 == 0])
+```
+Next, we'll have to add the [associative](https://hackage.haskell.org/package/semigroups-0.18.0.1/docs/Data-Semigroup.html)operator `(<>)`.
 
 ```
-Prelude> let fizz3 = (\i -> ["fizz " | i `mod` 3 == 0])
-Prelude> let buzz5 = (\i -> ["buzz " | i `mod` 5 == 0])
+*FizzBuzz> :m + Data.Semigroup
 ```
 
-```
-Prelude Data.Semigroup> fizz3 9
-["fizz "]
+We do this because we'd like to have each number checked by both functions, like so:
 
-Prelude Data.Semigroup> buzz5 9
+```
+*FizzBuzz Data.Semigroup> (buzz5 <> fizz3) 10
+```
+```
+["buzz "]
+```
+So, what just happened? To begin with, let's look at what happens when each function evaluates `10`.
+
+```
+*FizzBuzz Data.Semigroup> fizz3 10 
+[]
+```
+```
+*FizzBuzz Data.Semigroup> buzz5 10
+["buzz "]
+```
+and what happens when we apply the `(<>)` associative operator to the evaluation of `fizz3 10` and `buzz5 10`
+
+```
+*FizzBuzz Data.Semigroup> [] <> ["buzz "]
+["buzz "]
+```
+ghci will confirm the following are logically equivilent:
+```
+*FizzBuzz Data.Semigroup> ([] <> ["buzz "]) == ((buzz5 <> fizz3) 10)
+True
+```
+
+
+*FizzBuzz Data.Semigroup> buzz5 9
 []
 ```
 
@@ -54,11 +88,11 @@ Prelude Data.Semigroup> buzz5 9
 ```
 
 ```
-Prelude Data.Semigroup> :t (fizz3 <> fizz5) 9
+*FizzBuzz Data.Semigroup> :t (fizz3 <> fizz5) 9
 (fizz3 <> fizz5) 9 :: [[Char]]
 ```
 ```
-Prelude Data.Semigroup> :t (fizz3 <> fizz5)
+*FizzBuzz Data.Semigroup> :t (fizz3 <> fizz5)
 (fizz3 <> fizz5) :: Integral a => a -> [[Char]]
 ```
 
