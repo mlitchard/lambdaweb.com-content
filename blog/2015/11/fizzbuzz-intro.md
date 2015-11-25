@@ -16,11 +16,11 @@ Examining this problem also provides opportunity to examine Haskell itself:
  The first thing to do is install stack, because we want easy builds. 
  Then download my github repo [fizzbuzzfib](https://github.com/mlitchard/fizzbuzzfib)
 
-## [Part II](blog/2015/11/fizzbuzz-2)
+## [Part II](/blog/2015/11/fizzbuzz-2)
 
  I'm going to look at the spec and work through how we get to monad comprehensions as part of a extensible,maintainable solution,while at the same time
 reinforcing things [you've already seen](http://learnyouahaskell.com/chapters).
 
-## [Part III](blog/2015/11/fizzbuzz-3)
+## [Part III](/blog/2015/11/fizzbuzz-3)
 
  Here is where things get dirty. Error handling. Here's I'll show you the dirt and how we can use a monad to clean it up. 
