@@ -6,16 +6,16 @@ least of which is the spec itself. See, asking for appendable output that gets
 fired when an input evaluates to a particular value, or grouping of values
 is the intersting problem, not a specific instance of the problem domain.
 Examining this problem also provides opportunity to examine Haskell itself:
-* It's [semantics](https://en.wikibooks.org/wiki/Haskell/Denotational_semantics)
-* It's [leading build system](https://github.com/commercialhaskell/stack/blob/master/doc/README.md)
-* Error Handling
+*    It's [semantics](https://en.wikibooks.org/wiki/Haskell/Denotational_semantics)
+*    It's [leading build system](https://github.com/commercialhaskell/stack/blob/master/doc/README.md)
+*    Error Handling
 
 This blog post is for people who have seen a bit of Haskell; maybe have read
 some [Learn You A Haskell](http://learnyouahaskell.com/), and appreciate 
 seeing the building process in action. 
 
 
-## [Part I](/blog/2015/11/fizzbuzz-1.md)
+## [Part I](/blog/2015/11/fizzbuzz-1)
  The first thing to do is install stack
 k, then we'll get right into ghci and start unpacking
 fizzbuzz.
