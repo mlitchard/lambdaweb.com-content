@@ -1,4 +1,9 @@
 - time: 2015-11-23T07:30:00Z
   author: michael
-  title: "Fizzbuzz is not about Fizzbuzz"
-  path: 2015/11/fizzbuzz.md
+  title: "Fizzbuzz is not about Fizzbuzz - Introduction"
+  path: 2015/11/fizzbuzz-intro.md
+
+- time: 2015-11-23T07:30:00Z
+  author: michael
+  title: "Fizzbuzz is not about Fizzbuzz - Part 1"
+  path: 2015/11/fizzbuzz-1.md
