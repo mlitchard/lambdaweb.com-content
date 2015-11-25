@@ -23,4 +23,4 @@ therefore makes a codebase more easily reproducable.
 with the top-level directory of the git repo
 , open up the ghc interpreter like so:
 `stack ghci`
-Now off you go to [Part 2](blog/2015/11/fizzbuzz-2)
+Now off you go to [Part 2](/fizzbuzz-2)
