@@ -10,8 +10,9 @@ Examining this problem also provides opportunity to examine Haskell itself:
 *    It's [leading build system](https://github.com/commercialhaskell/stack/blob/master/doc/README.md)
 *    [Error Handling](https://www.fpcomplete.com/school/starting-with-haskell/basics-of-haskell/10_Error_Handling) - Because if there is input, there's error handling
 
-
+*    [Unit](https://wiki.haskell.org/HUnit_1.0_User%27s_Guide) and [property](https://www.fpcomplete.com/user/pbv/an-introduction-to-quickcheck-testing)
 ## [Part I](/blog/2015/11/fizzbuzz-1)
+ Wherein I speak on Haskell As Engineering Language.
  The first thing to do is install stack, because we want easy builds. 
  Then download my github repo [fizzbuzzfib](https://github.com/mlitchard/fizzbuzzfib)
 
