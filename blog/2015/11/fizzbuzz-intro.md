@@ -1,5 +1,4 @@
 Fizzbuzz is a chance to examine Haskell as an engineering language.
-
 This series is where I have fun with Fizzbuzz. I started writing a fizzbuzz
 because a local startup wanted it done as part of a coding test. I decided
 against the company, but got interested in some things about fizzbuzz. The
@@ -7,16 +6,16 @@ least of which is the spec itself. See, asking for appendable output that gets
 fired when an input evaluates to a particular value, or grouping of values
 is the intersting problem, not a specific instance of the problem domain.
 Examining this problem also provides opportunity to examine Haskell itself:
-It's [semantics](https://en.wikibooks.org/wiki/Haskell/Denotational_semantics),
-It's [leading build system](https://github.com/commercialhaskell/stack/blob/master/doc/README.md), and finally,
-Where you put the I/O: At the edges of a system.
+# It's [semantics](https://en.wikibooks.org/wiki/Haskell/Denotational_semantics)
+# It's [leading build system](https://github.com/commercialhaskell/stack/blob/master/doc/README.md)
+# Error Handling
 
 This blog post is for people who have seen a bit of Haskell; maybe have read
 some [Learn You A Haskell](http://learnyouahaskell.com/), and appreciate 
 seeing the building process in action. 
 
 
-## [Part I](/blog/2015/11/fiz1)
+## [Part I](/fizzbuzz-1)
  The first thing to do is install stack
 k, then we'll get right into ghci and start unpacking
 fizzbuzz.
