@@ -1,4 +1,12 @@
-## Placeholder for Part II
+## Problem Specification
+
+### Given an Integer n, the program should generate up to the nth Fibonnacci
+### number. This list will then be used as input for the fizzbuzz function.
+### This function will emit a `"fizz":: String` when it evaluates a number to
+### be divisible by 3, a `"buzz" :: String` when it evaluates a number to be divisible by 5, and `"fizz buzz" :: String` when a number is divisible by 
+both 3 and 5. The design will be such that other features may be added easily.
+I/O needs to be managed. Take bad input into consideration. 
+
 
 Now we can get to it. The first thing I wanted to play with, was examining the
 reason as to why we need monad comprehensions. Why not plain list
@@ -75,7 +83,32 @@ ghci will confirm the following are logically equivilent:
 *FizzBuzz Data.Semigroup> ([] <> ["buzz "]) == ((buzz5 <> fizz3) 10)
 True
 ```
+from [`Data.Semigroup`](https://hackage.haskell.org/package/semigroups-0.18.0.1/docs/Data-Semigroup.html)
+```
+class Semigroup a where Source
 
+Minimal complete definition
+
+Nothing
+
+Methods
+
+(<>) :: a -> a -> a infixr 6 Source
+
+An associative operation.
+
+(a <> b) <> c = a <> (b <> c)
+
+If a is also a Monoid we further require
+
+(<>) = mappend
+```
+And the [] instance of Semigroup
+```
+instance Semigroup [a] where
+  (<>) = (++)
+```
+defines `concat` as the associative operator
 
 *FizzBuzz Data.Semigroup> buzz5 9
 []
@@ -98,25 +131,6 @@ True
 
 
 from [`Data.Semigroup`](https://hackage.haskell.org/package/semigroups-0.18.0.1/docs/Data-Semigroup.html)
-```
-class Semigroup a where Source
-
-Minimal complete definition
-
-Nothing
-
-Methods
-
-(<>) :: a -> a -> a infixr 6 Source
-
-An associative operation.
-
-(a <> b) <> c = a <> (b <> c)
-
-If a is also a Monoid we further require
-
-(<>) = mappend
-```
 
 From [GHC's MonadComprehensions page](https://ghc.haskell.org/trac/ghc/wiki/MonadComprehensions)
 > With {-# LANGUAGE MonadComprehensions #-} the comprehension
