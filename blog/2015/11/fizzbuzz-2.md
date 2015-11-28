@@ -1,20 +1,12 @@
 ## Problem Specification
 
-This function will emit a `"fizz":: String` when it evaluates a number to
+This function will return a `"fizz":: String` when it evaluates a number to
 be divisible by 3, a `"buzz" :: String` when it evaluates a number to be
-divisible by 5, and `"fizzbuzz" :: String` When a number fails to evaluate
+divisible by 5, and `"fizzbuzz" :: String` when a number is divisible by both 3 and 5. When a number fails to evaluate
 as either being divisible by 3 or 5, the function returns "<some number>" :: String.
-I/O needs to be managed. Take bad input into consideration. 
 
-Example:
-
-
-
-Now we can get to it. The first thing I wanted to play with, was examining the
-reason as to why we want monad comprehensions. Why not plain list
-comprehensions? I'll build up to answering this question slowly. First
-let's get a reminder of what list comprehensions are for, because I hardly ever
-use them. Here's what [wikipedia](https://en.wikipedia.org/wiki/List_comprehension) has to say:
+In the post,["FizzBuzz, A Deep Navel Gaze Into"](http://dave.fayr.am/posts/2012-10-4-finding-fizzbuzz.html), the author solves the problem with monad comprehensions. I'd like to examine why we would want monad comprehensions. Why not plain
+list comprehensions? Let's start with a reminder of what list comprehensions are. Here's what [wikipedia](https://en.wikipedia.org/wiki/List_comprehension) has to say:
 
 > A list comprehension is a syntactic construct available in some programming
 > languages for creating a list based on existing lists. It follows the form of
@@ -24,64 +16,47 @@ use them. Here's what [wikipedia](https://en.wikipedia.org/wiki/List_comprehensi
 So in the case of what we'd be looking for in a fizzbuzz program:
 
 ```
-*FizzBuzz> ["fizz " | 15 `mod` 3 == 0]
-["fizz "]
+*FizzBuzz> (\i -> ["fizz" | i `mod` 3 == 0]) 15
+["fizz"]
 
-```
-But this only checks the number 15. Using a lambda (anonymous) function,
-we can generalize to check for any arbitrary number.
-```
-*FizzBuzz> (\i -> ["fizz " | i `mod` 3 == 0]) 15
-["fizz "]
-```
-This is as no suprise to experienced programmers, but there
-are other patterns that can be abstracted that may suprise you.
-We'll cover that later. For now, another anonymous function
-for our fizzbuzz program. This time checking for numbers divisable by 5.
-
-```
-*FizzBuzz> (\i -> ["buzz " | i `mod` 5 == 0]) 11
+*FizzBuzz> (\i -> ["buzz" | i `mod` 5 == 0]) 11
 []
 ```
 That empty list will prove to be a problem, we'll have to come up with
 a better way to represent failure. For now, let's bind these functions
 to names.
 ```
-*FizzBuzz> let fizz3 = (\i -> ["fizz " | i `mod` 3 == 0])
-*FizzBuzz> let buzz5 = (\i -> ["buzz " | i `mod` 5 == 0])
+*FizzBuzz> let fizz3 = (\i -> ["fizz" | i `mod` 3 == 0])
+*FizzBuzz> let buzz5 = (\i -> ["buzz" | i `mod` 5 == 0])
 ```
 Next, we'll have to add the [associative](https://hackage.haskell.org/package/semigroups-0.18.0.1/docs/Data-Semigroup.html) operator `(<>)`.
-
 ```
 *FizzBuzz> :m + Data.Semigroup
 ```
-
 We do this because we'd like to have each number checked by both functions, like so:
-
 ```
 *FizzBuzz Data.Semigroup> (buzz5 <> fizz3) 10
 ```
 ```
-["buzz "]
+["buzz"]
 ```
 So, what just happened? To begin with, let's look at what happens when each function evaluates `10`.
-
 ```
 *FizzBuzz Data.Semigroup> fizz3 10 
 []
 ```
 ```
 *FizzBuzz Data.Semigroup> buzz5 10
-["buzz "]
+["buzz"]
 ```
-and what happens when we apply the `(<>)` associative operator to the evaluation of `fizz3 10` and `buzz5 10`
+And what happens when we apply the `(<>)` associative operator to the evaluation of `fizz3 10` and `buzz5 10`.
 ```
-*FizzBuzz Data.Semigroup> [] <> ["buzz "]
-["buzz "]
+*FizzBuzz Data.Semigroup> [] <> ["buzz"]
+["buzz"]
 ```
 ghci will confirm the following are logically equivilent:
 ```
-*FizzBuzz Data.Semigroup> ([] <> ["buzz "]) == ((buzz5 <> fizz3) 10)
+*FizzBuzz Data.Semigroup> ([] <> ["buzz"]) == ((buzz5 <> fizz3) 10)
 True
 ```
 from [`Data.Semigroup`](https://hackage.haskell.org/package/semigroups-0.18.0.1/docs/Data-Semigroup.html)
@@ -94,7 +69,7 @@ Nothing
 
 Methods
 
-(<>) :: a -> a -> a infixr 6 Source
+(<>) :: a -> a -> a infixr 6 
 
 An associative operation.
 
@@ -109,7 +84,7 @@ And the [] instance of Semigroup
 instance Semigroup [a] where
   (<>) = (++)
 ```
-defines `concat` as the associative operator
+defines plusplus as the associative operator. 
 
 This would be fine, except the requirement that the number being evaluated
 should be the output if it does not evaluate to being either divisible by 3 or 5. Without monadic comprehensions, we would have to do something like this
@@ -129,9 +104,10 @@ that, or guards or if-then-else, unless we have other options. We do.
 Haskell has monads, and this is where Monad Comprehensions save us
 from ugly error prone, hard-to-maintain case constructs. Here's the
 definition from [GHC's MonadComprehensions page](https://ghc.haskell.org/trac/ghc/wiki/MonadComprehensions)
->    With {-# LANGUAGE MonadComprehensions #-} the comprehension
->    [ f x | x <- xs, x>4 ]
->    is interpreted in an arbitrary monad, rather than being restricted to lists.
+
+> With {-# LANGUAGE MonadComprehensions #-} the comprehension
+> [ f x | x <- xs, x>4 ]
+> is interpreted in an arbitrary monad, rather than being restricted to lists.
 
 Now, what is this Monad we want to use? Right now, `fizzbuzz'` evaluates to `["fizz"]`, `["buzz"]`, `["fizzbuzz"]` or `[]`. It's the empty list that requires
 that extra control construct. Additionally, it doesn't actually represent
@@ -149,32 +125,39 @@ This means we can use Maybe as the arbitrary Monad for our monad comprehension.
 
 Compare 
 ```
-*FizzBuzz Data.Semigroup> let buzz5 = (\i -> ["buzz " | i `mod` 5 == 0]) :: (Integral a) => a -> [String]
-*FizzBuzz Data.Semigroup> let fizz3 = (\i -> ["fizz " | i `mod` 3 == 0]) :: (Integral a) => a -> [String]
-*FizzBuzz Data.Semigroup> let fizzbuzz = fizz3 <> buzz5 :: (Integral a) => a -> [String]
+*FizzBuzz Data.Semigroup> let buzz5 = (\i -> ["buzz" | i `mod` 5 == 0]) :: (Integral a) => a -> [String]
+
+*FizzBuzz Data.Semigroup> let fizz3 = (\i -> ["fizz" | i `mod` 3 == 0]) :: (Integral a) => a -> [String]
+
+*FizzBuzz Data.Semigroup> let fizzbuzz = fizz3 <> buzz5 
+
 *FizzBuzz Data.Semigroup> :t fizzbuzz
 fizzbuzz :: Integral a => a -> [String]
 ```
 with,
 ```
 *FizzBuzz Data.Semigroup> :set -XMonadComprehensions
-*FizzBuzz Data.Semigroup> let may_buzz5 = (\i -> ["buzz " | i `mod` 5 == 0]) :: (Integral a) => a -> Maybe String
-*FizzBuzz Data.Semigroup> let may_fizz3 = (\i -> ["fizz " | i `mod` 3 == 0]) :: (Integral a) => a -> Maybe String
+
+*FizzBuzz Data.Semigroup> let may_buzz5 = (\i -> ["buzz" | i `mod` 5 == 0]) :: (Integral a) => a -> Maybe String
+
+*FizzBuzz Data.Semigroup> let may_fizz3 = (\i -> ["fizz" | i `mod` 3 == 0]) :: (Integral a) => a -> Maybe String
+
+*FizzBuzz> let may_fizzbuzz = may_fizz3 <> may_buzz5
 *FizzBuzz Data.Semigroup> :t may_fizzbuzz
 may_fizzbuzz :: Integral a => a -> Maybe String
 ```
 
-We have two monads, a List and a Maybe. The list proves to not quite express failure as precisely as we would like. With monad comprehensions, we have the option of a more precise monad with a built-in value that expresses failure in a more general way, not just for a list that is empty.
+We have two monads, a List and a Maybe. The list proves to not quite express failure as precisely as we would like. With monad comprehensions, we have the option of a more precise monad with a built-in value that expresses failure in a more precise way.
 
 ```
 *FizzBuzz Data.Semigroup> map may_fizzbuzz [1,2 .. 10]
-[Nothing,Nothing,Just "fizz ",Nothing,Just "buzz ",Just "fizz ",Nothing,Nothing,Just "fizz ",Just "buzz "]
+[Nothing,Nothing,Just "fizz",Nothing,Just "buzz",Just "fizz",Nothing,Nothing,Just "fizz",Just "buzz"]
 ```
 Now we're much closer to the spec. We need to replace the `Nothing` value with the number that failed the test and remove the `Just` constructor.
 
 Fortunately, there is a function for that, [fromMaybe](https://hackage.haskell.org/package/base-4.8.1.0/docs/Data-Maybe.html)
 
->    fromMaybe :: a -> Maybe a -> a Source
+>    fromMaybe :: a -> Maybe a -> a 
 
 >    The fromMaybe function takes a default value and and Maybe value. If the Maybe is Nothing, it returns the default values; otherwise, it returns the value contained in the Maybe.
 
@@ -183,7 +166,7 @@ So we can do this:
 ```
 *FizzBuzz Data.Semigroup> let mf = (\i -> fromMaybe (show i) $ may_fizzbuzz i)
 *FizzBuzz Data.Semigroup> map mf [1 .. 15]
-["1","2","fizz ","4","buzz ","fizz ","7","8","fizz ","buzz ","11","fizz ","13","14","fizz buzz "]
+["1","2","fizz ","4","buzz","fizz","7","8","fizz","buzz","11","fizz","13","14","fizzbuzz"]
 ```
 
 So, that's the gist. But we're not quite finished.
@@ -201,7 +184,7 @@ The next best thing is the [`Option`](https://hackage.haskell.org/package/semigr
 
 ### A better monoid for Maybe
 ```
-newtype Option a Source
+newtype Option a 
 
 Option is effectively Maybe with a better instance of Monoid, built off of an underlying Semigroup instead of an underlying Monoid.
 
@@ -212,24 +195,26 @@ Option
 
 getOption :: Maybe a
 ```
-
-This only matters because in practice, the habit of choosing mathematical correctness when the cost to do so is negligable, is generally a good idea.
-
 So, a slight adjustment to our definitions is required
 ```
-*FizzBuzz Data.Semigroup> let opt_fizz3 = (\i -> ["fizz " | i `mod` 3 == 0]) :: (Integral a) => a -> Option String
-*FizzBuzz Data.Semigroup> let opt_buzz5 = (\i -> ["buzz " | i `mod` 5 == 0]) :: (Integral a) => a -> Option String
+*FizzBuzz Data.Semigroup> let opt_fizz3 = (\i -> ["fizz" | i `mod` 3 == 0]) :: (Integral a) => a -> Option String
+
+*FizzBuzz Data.Semigroup> let opt_buzz5 = (\i -> ["buzz" | i `mod` 5 == 0]) :: (Integral a) => a -> Option String
+
 *FizzBuzz Data.Semigroup> let opt_fizzbuzz = opt_fizz3 <> opt_buzz5
+
 *FizzBuzz Data.Semigroup> :t opt_fizzbuzz
 opt_fizzbuzz :: Integral a => a -> Option String
+
 *FizzBuzz Data.Semigroup> let opt_fb = (\i -> fromMaybe (show i) $ getOption $ opt_fizzbuzz i)
+
 *FizzBuzz Data.Semigroup> :t opt_fb
 opt_fb :: (Show a, Integral a) => a -> String
 ```
-So now we can do the exact same thing before, with code that is more sound
+So now we can do the exact same thing before, with code that is more sound.
 
 *FizzBuzz Data.Semigroup> map opt_fb [1 .. 15]
-["1","2","fizz ","4","buzz ","fizz ","7","8","fizz ","buzz ","11","fizz ","13","14","fizz buzz "]
+["1","2","fizz","4","buzz","fizz","7","8","fizz","buzz","11","fizz","13","14","fizzbuzz"]
 
 We worked out a solution to this problem entirely in the interpreter,
 here's what the function would look like:
@@ -239,42 +224,49 @@ fizzbuzz :: Integer -> String
 fizzbuzz i = fromMaybe (show i) $ getOption fizzbuzz'
   where
     fizzbuzz' =
-      ["fizz " | i `rem` 3 == 0] <>
-      ["buzz " | i `rem` 5 == 0]
+      ["fizz" | i `rem` 3 == 0] <>
+      ["buzz" | i `rem` 5 == 0]
 ```
 
 Ah, so we're done. No! In our hypothetical scenario, the client now
-wants `"boogie down" :: String` to be emitted when a number is a prime.
+wants `"bang!" :: String` to be returned when a number is a prime.
 Not a problem. Here's what we would do in the interpreter:
 ```
-*FizzBuzz Data.Semigroup> let opt_isPrime = (\i -> ["boogie down " | isPrime i]) :: (Integral a) => a -> Option String
+*FizzBuzz Data.Semigroup> let opt_isPrime = (\i -> ["bang!" | isPrime i]) :: (Integral a) => a -> Option String
 
 *FizzBuzz Data.Semigroup> let opt_fizzbuzz = opt_fizz3 <> opt_buzz5 <> opt_isPrime
 
 *FizzBuzz Data.Semigroup> let opt_fb = (\i -> fromMaybe (show i) $ getOption $ opt_fizzbuzz i)
 *FizzBuzz Data.Semigroup> map opt_fb [1 .. 15]
-["1","boogie down ","fizz boogie down ","4","buzz boogie down ","fizz ","boogie down ","8","fizz ","buzz ","boogie down ","fizz ","boogie down ","14","fizz buzz "]
+["1","bang!","fizzbang!","4","buzzbang!","fizz","bang!","8","fizz","buzz","bang!","fizz","bang!","14","fizzbuzz"]
 ```
 
 Adding the feature to `fizzbuzz` would look like this:
 
 ```
-fizzbuzz :: Integer -> Either String
-fizzbuzz i = Right $ fromMaybe (show i) $ getOption fizzbuzz'
+fizzbuzz :: Integer -> String
+fizzbuzz i = fromMaybe (show i) $ getOption fizzbuzz'
   where
     fizzbuzz' =
       ["fizz " | i `rem` 3 == 0] <>
       ["buzz " | i `rem` 5 == 0] <>
-      ["boogie down " | isPrime i]
+      ["bang" | isPrime i]
 ```
-Whew. Okay. Finally done defining fizzbuzz. We can compose more "if number has property x emit string y" features as needed, and easily.
+Whew. Okay. Finally done defining fizzbuzz. We can compose more "if number has property x return string y" features as needed, and easily.
 
 But we're not done.
 The client has changed requirements yet again and needs the input type to be a fibonnacci number. Not a problem.
 Let's work out how to generate the fibonnacci sequence.
 Step 1 is admitting we don't know how to do that in a way that is not naive. So Google Away!
 
-Google brings us to a [wiki page](https://wiki.haskell.org/The_Fibonacci_sequence#Constant-time_implementations) that tells us what we need to know. Ah.
+Google brings us to a [wiki page](https://wiki.haskell.org/The_Fibonacci_sequence#Constant-time_implementations) that tells us what we need to know.
+### Binet's formula
+```
+fib n = round $ phi ** fromIntegral n / sq5
+  where
+    sq5 = sqrt 5 :: Double
+    phi = (1 + sq5) / 2
+```
 So let's make some definitions in the interpreter and see what we can do.
 
 ```
@@ -284,9 +276,9 @@ So let's make some definitions in the interpreter and see what we can do.
 *FizzBuzz Data.Semigroup> map fib [1 .. 10]
 [1,1,2,3,5,8,13,21,34,55]
 *FizzBuzz Data.Semigroup> map (opt_fb . fib) [1 .. 15]
-["1","1","boogie down ","fizz boogie down ","buzz boogie down ","8","boogie down ","fizz ","34","buzz ","boogie down ","fizz ","boogie down ","377","buzz "]
+["1","1","bang!","fizzbang!","buzzbang!","8","bang","fizz","34","buzz","bang!","fizz","bang","377","buzz"]
 ```
-The key word here is _composition_ . See how easy it was to bring it all together? The associative operator `(<>)` and the function composition operator `(.)` is what makes this possible.
+The key word here is _composition_ . See how easy it was to bring it all together? Monad comprehensions makes this possible.
 
 But since this is an engineering exercise, we're not done.
 In [Part 3](/blog/2015/11/fizzbuzz-3) we'll look at I/O, which means error
