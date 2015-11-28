@@ -3,7 +3,7 @@
 This function will return a `"fizz":: String` when it evaluates a number to
 be divisible by 3, a `"buzz" :: String` when it evaluates a number to be
 divisible by 5, and `"fizzbuzz" :: String` when a number is divisible by both 3 and 5. When a number fails to evaluate
-as either being divisible by 3 or 5, the function returns "<some number>" :: String.
+as either being divisible by 3 or 5, the function returns " < some number > " :: String.
 
 In the post,["FizzBuzz, A Deep Navel Gaze Into"](http://dave.fayr.am/posts/2012-10-4-finding-fizzbuzz.html), the author solves the problem with monad comprehensions. I'd like to examine why we would want monad comprehensions. Why not plain
 list comprehensions? Let's start with a reminder of what list comprehensions are. Here's what [wikipedia](https://en.wikipedia.org/wiki/List_comprehension) has to say:
@@ -260,6 +260,7 @@ Let's work out how to generate the fibonnacci sequence.
 Step 1 is admitting we don't know how to do that in a way that is not naive. So Google Away!
 
 Google brings us to a [wiki page](https://wiki.haskell.org/The_Fibonacci_sequence#Constant-time_implementations) that tells us what we need to know.
+
 ### Binet's formula
 ```
 fib n = round $ phi ** fromIntegral n / sq5
