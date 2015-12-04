@@ -1,13 +1,12 @@
 ## Dirty Dirty I/O And The Errors It Makes Us Handle
 
-What do we have thus far.
+What do we have thus far?
 
-1. A fizzbuzz function
-2. A feeder function for fizzbuzz
+1. A fizzbuzz function.
+2. A feeder function for fizzbuzz.
 3. No way for anyone to use these.
 
-Okay then, lets go ahead and make a command line executable for our fuzzbuzz
-
+Okay then, lets go ahead and make a command line executable for our fuzzbuzz.
 ```
 module Main where
 import FizzBuzz
@@ -18,10 +17,10 @@ main = do
   input <- getArgs
 ```  
 
-Okay now what. getArgs has type String :: IO (), and we need an Int.
-Well, can we get a String -> Integer? Let's ask Hoogle
+Okay now what. `getArgs` has type `String :: IO ()`, and we need an `Int`.
+Well, can we get a `String -> Integer`? Asking [Hoogle](https://www.haskell.org/hoogle/) we get a big fat "Nope". 
 
-Hoogle says nope. But look at what we did find
+But look at what we did find.
 `read :: Read a => String -> a`
 
 In our case we would need an `a :: Integer`. And lucky for us,
@@ -32,8 +31,8 @@ Let's unpack `read`, there's something cool going on there, and it's called
 `id`.
 
 ```
--- | The 'read' function reads input from a string, which must be
--- completely consumed by the input process.
+> -- | The 'read' function reads input from a string, which must be
+> -- completely consumed by the input process.
 read :: Read a => String -> a
 read s = either error id (readEither s)
 ```
@@ -43,13 +42,13 @@ either :: (a -> c) -> (b -> c) -> Either a b -> c
 ```
 >    Case analysis for the Either type. If the value is Left a, apply the first function to a; if it is Right b, apply the second function to b.
 
-Both [`error`](http://hackage.haskell.org/package/base-4.8.1.0/docs/Prelude.html#v:error) and [`id`](http://hackage.haskell.org/package/base-4.8.1.0/docs/Prelude.html#v:id) use a returned value given by [`readEither`](https://hackage.haskell.org/package/base-4.8.1.0/docs/Text-Read.html)
+Both [`error`](http://hackage.haskell.org/package/base-4.8.1.0/docs/Prelude.html#v:error) and [`id`](http://hackage.haskell.org/package/base-4.8.1.0/docs/Prelude.html#v:id) use a returned value given by [`readEither`](https://hackage.haskell.org/package/base-4.8.1.0/docs/Text-Read.html).
 
 ```
 readEither :: Read a => String -> Either String a Source
-
-Parse a string using the Read instance. Succeeds if there is exactly one valid result. A Left value indicates a parse error.
 ```
+> Parse a string using the Read instance. Succeeds if there is exactly one valid result. A Left value indicates a parse error.
+
 So if someone wanted to be a jerkface and give our fizzbuzz program a string that no on would recognize as an `Integer`, but we expected one, `readEither` would do this:
 ```
 Prelude> :m + Text.Read
