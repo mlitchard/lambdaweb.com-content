@@ -19,8 +19,9 @@ Okay then, lets go ahead and make a command line executable for our fuzzbuzz.
 Okay now what. `getArgs` has type `String :: IO ()`, and we need an `Int`.
 Well, can we get a `String -> Integer`? Asking [Hoogle](https://www.haskell.org/hoogle/) we get a big fat "Nope". 
 
-But look at what we did find.
-`read :: Read a => String -> a`
+But look at what we did find:
+
+    read :: Read a => String -> a
 
 In our case we would need an `a :: Integer`. And lucky for us,
 `Integer` has a `Read` instance:
@@ -29,23 +30,30 @@ In our case we would need an `a :: Integer`. And lucky for us,
 Let's unpack `read`, there's something cool going on there, and it's called
 `id`.
 
-> -- | The 'read' function reads input from a string, which must be
-> -- completely consumed by the input process.
+> The 'read' function reads input from a string, which must be
+> completely consumed by the input process.
+
     read :: Read a => String -> a
     read s = either error id (readEither s)
+
 We'll go left to right, starting with the [`either`](https://hackage.haskell.org/package/base-4.8.1.0/docs/Data-Either.html) function.
+
     either :: (a -> c) -> (b -> c) -> Either a b -> c 
->    Case analysis for the Either type. If the value is Left a, apply the first function to a; if it is Right b, apply the second function to b.
+
+> Case analysis for the Either type. If the value is Left a, apply the first function to a; if it is Right b, apply the second function to b.
 
 Both [`error`](http://hackage.haskell.org/package/base-4.8.1.0/docs/Prelude.html#v:error) and [`id`](http://hackage.haskell.org/package/base-4.8.1.0/docs/Prelude.html#v:id) use a returned value given by [`readEither`](https://hackage.haskell.org/package/base-4.8.1.0/docs/Text-Read.html).
 
     readEither :: Read a => String -> Either String a Source
+
 > Parse a string using the Read instance. Succeeds if there is exactly one valid result. A Left value indicates a parse error.
 
 So if someone wanted to be a jerkface and give our fizzbuzz program a string that no on would recognize as an `Integer`, but we expected one, `readEither` would do this:
+
     Prelude> :m + Text.Read
     Prelude Text.Read> readEither "foogle" :: Either String Integer
     Left "Prelude.read: no parse"
+
 `either` takes the `Left String` and transforms it into a `String`, which is then passed to `error`.
 
 Here's where it gets hairy, because `read` uses `error`, it's a [partial function](https://wiki.haskell.org/Partial_functions). And we want total functions,
@@ -56,6 +64,7 @@ Well now, we can't use `read`, because it's gross. What else is there? While inv
 I say almost, because in the event of bad input it only returns a `Nothing`, which tells us exactly that about why the transform failed. It would be better to use `Either`. We could use a case statement to transform a `Maybe` into an `Either`, but since this is needed so often, someone made a function to do it, [`maybeToEither'](https://hackage.haskell.org/package/MissingH-1.3.0.1/docs/Data-Either-Utils.html).
 
 This allows us to have a simple function that looks like this:
+
     convertToDigit :: String -> Either String Integer
     convertToDigit str =
       maybeToEither "Not An Integer" (readMaybe str)
@@ -126,10 +135,12 @@ We can do better, because [`Either`](https://hackage.haskell.org/package/base-4.
     instance Monad (Either e) where
       Left  l >>= _ = Left l
       Right r >>= k = k r
+
 What this means is, with a little modification we can make a cleaner
 [control structure](https://www.fpcomplete.com/school/starting-with-haskell/basics-of-haskell/10_Error_Handling) that is easy to read and extensible.
 
 First we change the sematics of our code a little.
+
     fizzbuzz :: Integer -> Either FizzError String
     fizzbuzz i = Right $ fromMaybe (show i) $ getOption fizzbuzz'
       where
@@ -147,6 +158,7 @@ First we change the sematics of our code a little.
     (\x -> Right [1 .. x])
 
 Then we can do this:
+
     fizzBuzzFib :: [String] -> Either FizzError [String]
     fizzBuzzFib str =
       mapM fizzbuzz          =<<
