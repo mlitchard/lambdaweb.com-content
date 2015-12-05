@@ -167,7 +167,11 @@ Then we can do this:
       convertToDigit         =<<
       mustHaveOne str
 
-We can now see some fizzbuzz action:
+Before running the commands below, take a look at the [.cabal file](https://www.haskell.org/cabal/users-guide/developing-packages.html#editing-the-.cabal-file) and get a feel for how the build is being organized. Also make sure `$HOME/.local/bin` is in your `$PATH`.
+
+We can now see some fizzbuzz action. The expected input is the an `Integer` n,
+where n is the nth fibonacci number. A list from 1 to n is then generated,
+which is used to generate a list of the first n fibonacci numbers. It's this list our fizzbuzz machine uses.
 
     stack clean
     stack install
@@ -187,7 +191,48 @@ And Again
     Just pass in one number that decribes how many fibonacci numbers you want for fizzbuzz.
 
 Enough messing around, buzz me!
+`mlitchard@mlitchard-personal:~/projects/git/fizzbuzzfib$ fizzbuzzfib-exe 40`
 
+    1
+    1
+    boogie down 
+    fizz boogie down 
+    buzz boogie down 
+    8
+    boogie down 
+    fizz 
+    34
+    buzz 
+    boogie down 
+    fizz 
+    boogie down 
+    377
+    buzz 
+    fizz 
+    boogie down 
+    2584
+    4181
+    fizz buzz 
+    10946
+    17711
+    boogie down 
+    fizz 
+    buzz 
+    121393
+    196418
+    fizz 
+    boogie down 
+    buzz 
+    1346269
+    fizz 
+    3524578
+    5702887
+    buzz 
+    fizz 
+    24157817
+    39088169
+    63245986
+    fizz buzz *Ding Ding Ding*
 
 Composition is the solution to the unprecedented complexity we find in software engineering, compared to other engineering disciplines, and [monads](https://www.youtube.com/watch?v=ZhuHCtR3xq8) is one very convenient mechanism that allows
 us to compose constructs [that aren't functions](http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html).
