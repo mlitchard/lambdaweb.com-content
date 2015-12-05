@@ -1,20 +1,19 @@
 Fizzbuzz is a chance to examine Haskell as an engineering language.
-I started writing a fizzbuzz because a local startup wanted it done as part of a coding test. I decided against the company
-but got interested in some things about fizzbuzz. The
-least of which is the spec itself. That we can capture the patterns
-expressed in fizzbuzz, and use it to talk about Haskell and it's ecosystem, is what is interesting about fizzbuzz, not a particular
-concrete implementation.
+I started writing a fizzbuzz as part of a coding test. As I was googling around,
+I came across this [blog post](http://dave.fayr.am/posts/2012-10-4-finding-fizzbuzz.html). In it he identifies the general pattern of fizzbuzz as something you find in many real-world systems. That we can capture the pattern expressed
+in FizzBUzz and use it to talk about Haskell is what compelles interest.
+Not a particular concrete implementation.
+
+The intended audience for this series are people who have at least glanced through [Learn You A Haskell](http://learnyouahaskell.com/)
  
 Examining this problem also provides opportunity to examine Haskell itself:
 *    It's [semantics](https://en.wikibooks.org/wiki/Haskell/Denotational_semantics)
 *    It's [leading build system](https://github.com/commercialhaskell/stack/blob/master/doc/README.md)
-*    [Error Handling](https://www.fpcomplete.com/school/starting-with-haskell/basics-of-haskell/10_Error_Handling) - Because if there is input, there's error handling
+*    [Error Handling](https://www.fpcomplete.com/school/starting-with-haskell/basics-of-haskell/10_Error_Handling) 
 
-*    [Unit](https://wiki.haskell.org/HUnit_1.0_User%27s_Guide) and [property](https://www.fpcomplete.com/user/pbv/an-introduction-to-quickcheck-testing)
+*    [Unit](https://wiki.haskell.org/HUnit_1.0_User%27s_Guide) and [property](https://www.fpcomplete.com/user/pbv/an-introduction-to-quickcheck-testing) testing.
 ## [Part I](/blog/2015/11/fizzbuzz-1)
- Wherein I speak on Haskell As Engineering Language.
- The first thing to do is install stack, because we want easy builds. 
- Then download my github repo [fizzbuzzfib](https://github.com/mlitchard/fizzbuzzfib)
+ There are a few ways to manage development builds. We talk about the corporate-backed one, stack. 
 
 ## [Part II](/blog/2015/11/fizzbuzz-2)
 
@@ -23,4 +22,10 @@ reinforcing things [you've already seen](http://learnyouahaskell.com/chapters).
 
 ## [Part III](/blog/2015/11/fizzbuzz-3)
 
- Here is where things get dirty. Error handling. Here's I'll show you the dirt and how we can use a monad to clean it up. 
+ Here is where things get dirty. Error handling. Here's I'll show you the dirt and how we can use a monad to clean it up.
+
+## [Part IV](/blog/2015/11/fizzbuzz-4)
+ A discussion about unit and property testing.
+
+## [Part V](/blog/2015/11/fizzbuzz-5)
+ Deployment with Docker. 

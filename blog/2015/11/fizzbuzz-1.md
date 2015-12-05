@@ -18,7 +18,8 @@ Haskell offers the following for software engineers
 In this series we will use fizzbuzz to examine some of these facilities,
 starting with Stack. Stack solves the problem of [dependency hell](http://stackoverflow.com/questions/25869041/whats-the-reason-behind-cabal-dependency-hell) and therefore makes a codebase more easily reproducable.
 [install stack](https://github.com/commercialhaskell/stack/tree/master/doc), then [download fizzbuzzfib](https://github.com/mlitchard/fizzbuzzfib).
-with the top-level directory of the git repo
-, open up the ghc interpreter like so:
+`Stack` uses .cabal files much like it's predecessor [cabal-install](https://www.fpcomplete.com/user/simonmichael/how-to-cabal-install). With it, you describe compiler flags, dependencies, testing environments,exposed and hidden modules (among other things). In [Part 3](/blog/2015/11/fizzbuzz-3) we'll take a look at it. For now, make sure your present working directory is the repo's toplevel and type the following:
+
 `stack ghci`
+
 Now off you go to [Part 2](/blog/2015/11/fizzbuzz-2)
