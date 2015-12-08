@@ -45,8 +45,11 @@ In order to use these tests, we need to configure the `.cabal` file like so:
       default-language:    Haskell2010
 
 and now we can run our tests
+
 `mlitchard@mlitchard-personal:~/projects/git/fizzbuzzfib$ stack test`
+
 <snip>
+
     Clean Input, Correct Control Structure
       returns (NoInput :: FibError)
       returns (OnlyOne :: FibError)
