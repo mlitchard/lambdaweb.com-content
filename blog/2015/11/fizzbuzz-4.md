@@ -5,7 +5,7 @@ putting this project together I only decided to include tests because this
 series is focused on engineering. As it turns out the unit tests I made
 actually caught one of my functions as only being partially defined.
 That combined with problems with my game
-[Emporos](/blog/2015/11/momentio-testing.md), I have repented of my evil ways.
+[Emporos](/blog/2015/11/momentio-testing), I have repented of my evil ways.
 
 This section is about [HSpec](http://hspec.github.io/writing-specs.html) and how we can use it to test behavior. Here's what the fizzbuzzfib test set looks like.
 
