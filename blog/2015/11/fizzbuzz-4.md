@@ -64,3 +64,5 @@ and now we can run our tests
     Completed all 2 actions.
 
 To see something more complicated, click the link above to my blog entry about writing a test for my game Emporos. To get an idea of what a real world test-suit might look like, have a look at [warp's](https://github.com/yesodweb/wai/blob/master/warp/test/RunSpec.hs) test suite.
+
+For the final installment, I will talk about deployment with Docker.
