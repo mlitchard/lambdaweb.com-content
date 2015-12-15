@@ -1,6 +1,6 @@
 ## Problem Specification
 
-This function will return a `"fizz":: String` when it evaluates a number to
+This program will return a `"fizz":: String` when it evaluates a number to
 be divisible by 3, a `"buzz" :: String` when it evaluates a number to be
 divisible by 5, and `"fizzbuzz" :: String` when a number is divisible by both 3 and 5. When a number fails to evaluate
 as either being divisible by 3 or 5, the function returns " < some number > " :: String.
@@ -102,7 +102,7 @@ badbuzz a =
 The case control structure is the wrong tool for the job. But we have to use
 that, or guards or if-then-else, unless we have other options. We do.
 Haskell has monads, and this is where Monad Comprehensions save us
-from ugly error prone, hard-to-maintain case constructs. Here's the
+from ugly, error prone, hard-to-maintain case constructs. Here's the
 definition from [GHC's MonadComprehensions page](https://ghc.haskell.org/trac/ghc/wiki/MonadComprehensions)
 
 > With {-# LANGUAGE MonadComprehensions #-} the comprehension

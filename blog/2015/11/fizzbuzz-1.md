@@ -2,11 +2,11 @@
 
 Haskell offers the following for software engineers
 
-*    Reproducability - The build system stack is gaining steam. But there are others, such as [nix](http://www.cse.chalmers.se/~bernardy/nix.html)
+*    Reproducability - The build system stack is gaining steam. But there are others, such as [nix](http://www.cse.chalmers.se/~bernardy/nix.html), and [halcyon](http://halcyon.sh)
 
 *    Solid Testing Tools - [QuickCheck](https://www.fpcomplete.com/user/pbv/an-introduction-to-quickcheck-testing) and [HUnit](https://wiki.haskell.org/HUnit_1.0_User%27s_Guide)
 
-*    Maintainable - Via [concise semantics](https://www.fpcomplete.com/business/about/haskell-improves-productivity/) and a powerful [type system](http://programmers.stackexchange.com/questions/279316/what-exactly-makes-the-haskell-type-system-so-revered-vs-say-java) 
+*    Maintainablility - Via [concise semantics](https://www.fpcomplete.com/business/about/haskell-improves-productivity/) and a powerful [type system](http://programmers.stackexchange.com/questions/279316/what-exactly-makes-the-haskell-type-system-so-revered-vs-say-java) 
 
 *    Parallel and Concurrent Programming - [Superior Constructs](https://downloads.haskell.org/~ghc/7.8.4/docs/html/users_guide/lang-parallel.html) for parallel and concurrent programming
 
@@ -22,4 +22,4 @@ starting with Stack. Stack solves the problem of [dependency hell](http://stacko
 
 `stack ghci`
 
-Now off you go to [Part 2](/blog/2015/11/fizzbuzz-2)
+Now off you go to [Part 2](/blog/2015/11/fizzbuzz-2).

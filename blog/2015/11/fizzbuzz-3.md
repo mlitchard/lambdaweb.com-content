@@ -16,7 +16,7 @@ Okay then, lets go ahead and make a command line executable for our fuzzbuzz.
     main = do
       input <- getArgs
 
-Okay now what. `getArgs` has type `String :: IO ()`, and we need an `Int`.
+Okay now what. `getArgs` has type `String :: IO ()`, and we need an `Integer`.
 Well, can we get a `String -> Integer`? Asking [Hoogle](https://www.haskell.org/hoogle/) we get a big fat "Nope". 
 
 But look at what we did find:
@@ -44,7 +44,7 @@ We'll go left to right, starting with the [`either`](https://hackage.haskell.org
 
 Both [`error`](http://hackage.haskell.org/package/base-4.8.1.0/docs/Prelude.html#v:error) and [`id`](http://hackage.haskell.org/package/base-4.8.1.0/docs/Prelude.html#v:id) use a returned value given by [`readEither`](https://hackage.haskell.org/package/base-4.8.1.0/docs/Text-Read.html).
 
-    readEither :: Read a => String -> Either String a Source
+    readEither :: Read a => String -> Either String a 
 
 > Parse a string using the Read instance. Succeeds if there is exactly one valid result. A Left value indicates a parse error.
 
@@ -61,7 +61,7 @@ every time.
 
 Well now, we can't use `read`, because it's gross. What else is there? While investigating `readEither`, you may have come across [`readMaybe`](https://hackage.haskell.org/package/base-4.8.1.0/docs/Text-Read.html). It's almost exactly what we need.
 
-I say almost, because in the event of bad input it only returns a `Nothing`, which tells us exactly that about why the transform failed. It would be better to use `Either`. We could use a case statement to transform a `Maybe` into an `Either`, but since this is needed so often, someone made a function to do it, [`maybeToEither'](https://hackage.haskell.org/package/MissingH-1.3.0.1/docs/Data-Either-Utils.html).
+I say almost, because in the event of bad input it only returns a `Nothing`, which tells us exactly nothing about why the transform failed. It would be better to use `Either`. We could use a case statement to transform a `Maybe` into an `Either`, but since this is needed so often, someone made a function to do it, [`maybeToEither'](https://hackage.haskell.org/package/MissingH-1.3.0.1/docs/Data-Either-Utils.html).
 
 This allows us to have a simple function that looks like this:
 
@@ -77,7 +77,7 @@ If you think that's overkill for one error condition you'd be right. There's mor
 
 In the meantime we can improve the above function like so:
 
-    convertToDigit :: String -> Either String Integer
+    convertToDigit :: String -> Either FizzError Integer
     convertToDigit str =
       maybeToEither NotAndInteger (readMaybe str)
 
@@ -107,7 +107,7 @@ expectations when they err.
       show NoInput      = "You need to pass in an integer that describes how" ++
                           " many fibonacci numbers you want for fizzbuzz."
 
-That's our three error conditions, the fibnonacci feeder function and 
+We now have a function accounts for one error condition, another accounting for the other two, the fibnonacci feeder function and 
 the actual fizzbuzz function.
 
 And all we have to do is put it together right?
@@ -126,7 +126,7 @@ Here's what happens if we use case as a control structure.
                     case (convertToDigit str) of
                       Left err -> Left err
                       Right int ->
-                      Right $ map (fizzbuzz . fib) ((\x -> [1 .. x]) int)
+                        Right $ map (fizzbuzz . fib) ((\x -> [1 .. x]) int)
       putStrLn (show res)
 
 `case` becomes staircase. Hard to read, hard to modify. Painful to behold.
@@ -137,9 +137,9 @@ We can do better, because [`Either`](https://hackage.haskell.org/package/base-4.
       Right r >>= k = k r
 
 What this means is, with a little modification we can make a cleaner
-[control structure](https://www.fpcomplete.com/school/starting-with-haskell/basics-of-haskell/10_Error_Handling) that is easy to read and extensible.
+[control structure](https://www.fpcomplete.com/school/starting-with-haskell/basics-of-haskell/10_Error_Handling) that is easy to read and extend.
 
-First we change the sematics of our code a little.
+First we change the semantics of our code a little.
 
     fizzbuzz :: Integer -> Either FizzError String
     fizzbuzz i = Right $ fromMaybe (show i) $ getOption fizzbuzz'
