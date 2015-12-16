@@ -16,46 +16,46 @@ Let's start with a reminder of what list comprehensions are. Here's what [wikipe
 So in the case of what we'd be looking for in a fizzbuzz program:
 
 ```
-*FizzBuzz> (\i -> ["fizz" | i `mod` 3 == 0]) 15
+FizzBuzz> (\i -> ["fizz" | i `mod` 3 == 0]) 15
 ["fizz"]
 
-*FizzBuzz> (\i -> ["buzz" | i `mod` 5 == 0]) 11
+FizzBuzz> (\i -> ["buzz" | i `mod` 5 == 0]) 11
 []
 ```
 That empty list will prove to be a problem, we'll have to come up with
 a better way to represent failure. For now, let's bind these functions
 to names.
 ```
-*FizzBuzz> let fizz3 = (\i -> ["fizz" | i `mod` 3 == 0])
-*FizzBuzz> let buzz5 = (\i -> ["buzz" | i `mod` 5 == 0])
+FizzBuzz> let fizz3 = (\i -> ["fizz" | i `mod` 3 == 0])
+FizzBuzz> let buzz5 = (\i -> ["buzz" | i `mod` 5 == 0])
 ```
 Next, we'll have to add the [associative](https://hackage.haskell.org/package/semigroups-0.18.0.1/docs/Data-Semigroup.html) operator `(<>)`.
 ```
-*FizzBuzz> :m + Data.Semigroup
+FizzBuzz> :m + Data.Semigroup
 ```
 We do this because we'd like to have each number checked by both functions, like so:
 ```
-*FizzBuzz Data.Semigroup> (buzz5 <> fizz3) 10
+FizzBuzz Data.Semigroup> (buzz5 <> fizz3) 10
 ["buzz"]
 ```
 So, what just happened? To begin with, let's look at what happens when each function evaluates `10`.
 ```
-*FizzBuzz Data.Semigroup> fizz3 10 
+FizzBuzz Data.Semigroup> fizz3 10 
 []
 ```
 ```
-*FizzBuzz Data.Semigroup> buzz5 10
+FizzBuzz Data.Semigroup> buzz5 10
 ["buzz"]
 ```
 And what happens when we apply the `(<>)` associative operator to the evaluation of `fizz3 10` and `buzz5 10`.
 ```
-*FizzBuzz Data.Semigroup> [] <> ["buzz"]
+FizzBuzz Data.Semigroup> [] <> ["buzz"]
 ["buzz"]
 ```
 ghci will confirm the following are logically equivilent:
 ```
 
-*FizzBuzz Data.Semigroup> ([] <> ["buzz"]) == ((buzz5 <> fizz3) 10)
+FizzBuzz Data.Semigroup> ([] <> ["buzz"]) == ((buzz5 <> fizz3) 10)
 True
 ```
 from [`Data.Semigroup`](https://hackage.haskell.org/package/semigroups-0.18.0.1/docs/Data-Semigroup.html)
@@ -124,32 +124,32 @@ This means we can use Maybe as the arbitrary monad for our monad comprehension.
 
 Compare 
 ```
-*FizzBuzz Data.Semigroup> let buzz5 = (\i -> ["buzz" | i `mod` 5 == 0]) :: (Integral a) => a -> [String]
+FizzBuzz Data.Semigroup> let buzz5 = (\i -> ["buzz" | i `mod` 5 == 0]) :: (Integral a) => a -> [String]
 
-*FizzBuzz Data.Semigroup> let fizz3 = (\i -> ["fizz" | i `mod` 3 == 0]) :: (Integral a) => a -> [String]
+FizzBuzz Data.Semigroup> let fizz3 = (\i -> ["fizz" | i `mod` 3 == 0]) :: (Integral a) => a -> [String]
 
-*FizzBuzz Data.Semigroup> let fizzbuzz = fizz3 <> buzz5 
+FizzBuzz Data.Semigroup> let fizzbuzz = fizz3 <> buzz5 
 
-*FizzBuzz Data.Semigroup> :t fizzbuzz
+FizzBuzz Data.Semigroup> :t fizzbuzz
 fizzbuzz :: Integral a => a -> [String]
 ```
 with,
 ```
-*FizzBuzz Data.Semigroup> :set -XMonadComprehensions
+FizzBuzz Data.Semigroup> :set -XMonadComprehensions
 
-*FizzBuzz Data.Semigroup> let may_buzz5 = (\i -> ["buzz" | i `mod` 5 == 0]) :: (Integral a) => a -> Maybe String
+FizzBuzz Data.Semigroup> let may_buzz5 = (\i -> ["buzz" | i `mod` 5 == 0]) :: (Integral a) => a -> Maybe String
 
-*FizzBuzz Data.Semigroup> let may_fizz3 = (\i -> ["fizz" | i `mod` 3 == 0]) :: (Integral a) => a -> Maybe String
+FizzBuzz Data.Semigroup> let may_fizz3 = (\i -> ["fizz" | i `mod` 3 == 0]) :: (Integral a) => a -> Maybe String
 
-*FizzBuzz> let may_fizzbuzz = may_fizz3 <> may_buzz5
-*FizzBuzz Data.Semigroup> :t may_fizzbuzz
+FizzBuzz> let may_fizzbuzz = may_fizz3 <> may_buzz5
+FizzBuzz Data.Semigroup> :t may_fizzbuzz
 may_fizzbuzz :: Integral a => a -> Maybe String
 ```
 
 We have two monads, a List and a Maybe. The list proves to not quite express failure as precisely as we would like. With monad comprehensions, we have the option of a more precise monad with a built-in value that expresses failure in a more precise way.
 
 ```
-*FizzBuzz Data.Semigroup> map may_fizzbuzz [1,2 .. 10]
+FizzBuzz Data.Semigroup> map may_fizzbuzz [1,2 .. 10]
 [Nothing,Nothing,Just "fizz",Nothing,Just "buzz",Just "fizz",Nothing,Nothing,Just "fizz",Just "buzz"]
 ```
 Now we're much closer to the spec. We need to replace the `Nothing` value with the number that failed the test and remove the `Just` constructor.
@@ -164,8 +164,8 @@ So we can do this:
 
 ```
 
-*FizzBuzz Data.Semigroup> let mf = (\i -> fromMaybe (show i) $ may_fizzbuzz i)
-*FizzBuzz Data.Semigroup> map mf [1 .. 15]
+FizzBuzz Data.Semigroup> let mf = (\i -> fromMaybe (show i) $ may_fizzbuzz i)
+FizzBuzz Data.Semigroup> map mf [1 .. 15]
 ["1","2","fizz","4","buzz","fizz","7","8","fizz","buzz","11","fizz","13","14","fizzbuzz"]
 ```
 
@@ -197,23 +197,23 @@ getOption :: Maybe a
 ```
 So, a slight adjustment to our definitions is required.
 ```
-*FizzBuzz Data.Semigroup> let opt_fizz3 = (\i -> ["fizz" | i `mod` 3 == 0]) :: (Integral a) => a -> Option String
+FizzBuzz Data.Semigroup> let opt_fizz3 = (\i -> ["fizz" | i `mod` 3 == 0]) :: (Integral a) => a -> Option String
 
-*FizzBuzz Data.Semigroup> let opt_buzz5 = (\i -> ["buzz" | i `mod` 5 == 0]) :: (Integral a) => a -> Option String
+FizzBuzz Data.Semigroup> let opt_buzz5 = (\i -> ["buzz" | i `mod` 5 == 0]) :: (Integral a) => a -> Option String
 
-*FizzBuzz Data.Semigroup> let opt_fizzbuzz = opt_fizz3 <> opt_buzz5
+FizzBuzz Data.Semigroup> let opt_fizzbuzz = opt_fizz3 <> opt_buzz5
 
-*FizzBuzz Data.Semigroup> :t opt_fizzbuzz
+FizzBuzz Data.Semigroup> :t opt_fizzbuzz
 opt_fizzbuzz :: Integral a => a -> Option String
 
-*FizzBuzz Data.Semigroup> let opt_fb = (\i -> fromMaybe (show i) $ getOption $ opt_fizzbuzz i)
+FizzBuzz Data.Semigroup> let opt_fb = (\i -> fromMaybe (show i) $ getOption $ opt_fizzbuzz i)
 
-*FizzBuzz Data.Semigroup> :t opt_fb
+FizzBuzz Data.Semigroup> :t opt_fb
 opt_fb :: (Show a, Integral a) => a -> String
 ```
 Now we can do the exact same thing before, with code that is more sound.
 ```
-*FizzBuzz Data.Semigroup> map opt_fb [1 .. 15]
+FizzBuzz Data.Semigroup> map opt_fb [1 .. 15]
 ["1","2","fizz","4","buzz","fizz","7","8","fizz","buzz","11","fizz","13","14","fizzbuzz"]
 ```
 We worked out a solution to this problem entirely in the interpreter,
@@ -237,7 +237,7 @@ Not a problem. Here's what we would do in the interpreter:
 FizzBuzz Data.Semigroup> :m + Data.Numbers.Primes
 FizzBuzz Data.Semigroup Data.Numbers.Primes>
 FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_isPrime = (\i -> ["bang!" | isPrime i]) :: (Integral a) => a -> Option String
-FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_fizzbuzz = opt_fizz3  <> opt_buzz5  opt_isPrime
+FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_fizzbuzz = opt_fizz3 <> opt_buzz5 <> opt_isPrime
 FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_fb = (\i -> fromMaybe (show i) $ getOption $ opt_fizzbuzz i)
 FizzBuzz Data.Semigroup Data.Numbers.Primes> map opt_fb [1 .. 15]
 ["1","bang!","fizzbang!","4","buzzbang!","fizz","bang!","8","fizz","buzz","bang!","fizz","bang!","14","fizzbuzz"]
@@ -272,12 +272,12 @@ fib n = round $ phi ** fromIntegral n / sq5
 So let's make some definitions in the interpreter and see what we can do.
 
 ```
-*FizzBuzz Data.Semigroup Data.Numbers.Primes> let sq5 = sqrt 5 :: Double
-*FizzBuzz Data.Semigroup Data.Numbers.Primes> let phi = (1 + sq5) / 2
-*FizzBuzz Data.Semigroup Data.Numbers.Primes> let fib = (\n -> round $ phi ** fromIntegral n / sq5)
-*FizzBuzz Data.Semigroup Data.Numbers.Primes> map fib [1 .. 10]
+FizzBuzz Data.Semigroup Data.Numbers.Primes> let sq5 = sqrt 5 :: Double
+FizzBuzz Data.Semigroup Data.Numbers.Primes> let phi = (1 + sq5) / 2
+FizzBuzz Data.Semigroup Data.Numbers.Primes> let fib = (\n -> round $ phi ** fromIntegral n / sq5)
+FizzBuzz Data.Semigroup Data.Numbers.Primes> map fib [1 .. 10]
 [1,1,2,3,5,8,13,21,34,55]
-*FizzBuzz Data.Semigroup Data.Numbers.Primes> map (opt_fb . fib) [1 .. 15]
+FizzBuzz Data.Semigroup Data.Numbers.Primes> map (opt_fb . fib) [1 .. 15]
 ["1","1","bang!","fizzbang!","buzzbang!","8","bang","fizz","34","buzz","bang!","fizz","bang!","377","buzz"]
 ```
 The key word here is _composition_ . See how easy it was to bring it all together? Monad comprehensions makes this possible.
