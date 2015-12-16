@@ -234,12 +234,12 @@ Not a problem. Here's what we would do in the interpreter:
 
 
 ```
-*FizzBuzz Data.Semigroup> :m + Data.Numbers.Primes
-*FizzBuzz Data.Semigroup Data.Numbers.Primes>
-*FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_isPrime = (\i -> ["bang!" | isPrime i]) :: (Integral a) => a -> Option String
-*FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_fizzbuzz = opt_fizz3  \<\> opt_buzz5  opt_isPrime
-*FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_fb = (\i -> fromMaybe (show i) $ getOption $ opt_fizzbuzz i)
-*FizzBuzz Data.Semigroup Data.Numbers.Primes> map opt_fb [1 .. 15]
+FizzBuzz Data.Semigroup> :m + Data.Numbers.Primes
+FizzBuzz Data.Semigroup Data.Numbers.Primes>
+FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_isPrime = (\i -> ["bang!" | isPrime i]) :: (Integral a) => a -> Option String
+FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_fizzbuzz = opt_fizz3  <> opt_buzz5  opt_isPrime
+FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_fb = (\i -> fromMaybe (show i) $ getOption $ opt_fizzbuzz i)
+FizzBuzz Data.Semigroup Data.Numbers.Primes> map opt_fb [1 .. 15]
 ["1","bang!","fizzbang!","4","buzzbang!","fizz","bang!","8","fizz","buzz","bang!","fizz","bang!","14","fizzbuzz"]
 ```
 Adding the feature to `fizzbuzz` would look like this:
