@@ -250,7 +250,7 @@ fizzbuzz i = fromMaybe (show i) $ getOption fizzbuzz'
   where
     fizzbuzz' =
       ["fizz " | i `rem` 3 == 0] <>
-      ["buzz " | i `rem` 5 == 0] <>
+      ["buzz " | i `rem` 5 == 0] 
       ["bang!" | isPrime i]
 ```
 Whew. Okay. Finally done defining fizzbuzz. We can compose more "if number has property x return string y" features as needed, and easily.
