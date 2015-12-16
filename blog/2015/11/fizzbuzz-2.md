@@ -235,6 +235,7 @@ fizzbuzz i = fromMaybe (show i) $ getOption fizzbuzz'
 Ah, so we're done. No! In our hypothetical scenario, the client now
 wants `"bang!" :: String` to be returned when a number is a prime.
 Not a problem. Here's what we would do in the interpreter:
+
 ```
 *FizzBuzz Data.Semigroup> :m + Data.Numbers.Primes
 *FizzBuzz Data.Semigroup Data.Numbers.Primes>
