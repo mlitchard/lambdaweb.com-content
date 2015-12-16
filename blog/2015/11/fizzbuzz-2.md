@@ -197,7 +197,7 @@ Option
 
 getOption :: Maybe a
 ```
-So, a slight adjustment to our definitions is required
+So, a slight adjustment to our definitions is required.
 ```
 *FizzBuzz Data.Semigroup> let opt_fizz3 = (\i -> ["fizz" | i `mod` 3 == 0]) :: (Integral a) => a -> Option String
 
@@ -213,12 +213,10 @@ opt_fizzbuzz :: Integral a => a -> Option String
 *FizzBuzz Data.Semigroup> :t opt_fb
 opt_fb :: (Show a, Integral a) => a -> String
 ```
-So now we can do the exact same thing before, with code that is more sound.
-
+Now we can do the exact same thing before, with code that is more sound.
 ```
 *FizzBuzz Data.Semigroup> map opt_fb [1 .. 15]
 ["1","2","fizz","4","buzz","fizz","7","8","fizz","buzz","11","fizz","13","14","fizzbuzz"]
-
 ```
 We worked out a solution to this problem entirely in the interpreter,
 here's what the function would look like:
@@ -236,18 +234,18 @@ Ah, so we're done. No! In our hypothetical scenario, the client now
 wants `"bang!" :: String` to be returned when a number is a prime.
 Not a problem. Here's what we would do in the interpreter:
 
-```
-*FizzBuzz Data.Semigroup> :m + Data.Numbers.Primes
-*FizzBuzz Data.Semigroup Data.Numbers.Primes>
 
-*FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_isPrime = (\i -> ["bang!" | isPrime i]) :: (Integral a) => a -> Option String
 
-*FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_fizzbuzz = opt_fizz3 <> opt_buzz5 <> opt_isPrime
+>    *FizzBuzz Data.Semigroup> :m + Data.Numbers.Primes
+>    *FizzBuzz Data.Semigroup Data.Numbers.Primes>
 
-*FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_fb = (\i -> fromMaybe (show i) $ getOption $ opt_fizzbuzz i)
-*FizzBuzz Data.Semigroup Data.Numbers.Primes> map opt_fb [1 .. 15]
+>    *FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_isPrime = (\i -> ["bang!" | isPrime i]) :: (Integral a) => a -> Option String
+
+>    *FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_fizzbuzz = opt_fizz3 <> opt_buzz5 <> opt_isPrime
+
+>    *FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_fb = (\i -> fromMaybe (show i) $ getOption $ opt_fizzbuzz i)
+>    *FizzBuzz Data.Semigroup Data.Numbers.Primes> map opt_fb [1 .. 15]
 ["1","bang!","fizzbang!","4","buzzbang!","fizz","bang!","8","fizz","buzz","bang!","fizz","bang!","14","fizzbuzz"]
-```
 
 Adding the feature to `fizzbuzz` would look like this:
 
