@@ -1,12 +1,12 @@
 ## Problem Specification
 
-This program will return a `"fizz":: String` when it evaluates a number to
+This program will return a `"fizz" :: String` when it evaluates a number to
 be divisible by 3, a `"buzz" :: String` when it evaluates a number to be
 divisible by 5, and `"fizzbuzz" :: String` when a number is divisible by both 3 and 5. When a number fails to evaluate
 as either being divisible by 3 or 5, the function returns " < some number > " :: String.
 
-In the post,["FizzBuzz, A Deep Navel Gaze Into"](http://dave.fayr.am/posts/2012-10-4-finding-fizzbuzz.html), the author solves the problem with monad comprehensions. I'd like to examine why we would want monad comprehensions. Why not plain
-list comprehensions? Let's start with a reminder of what list comprehensions are. Here's what [wikipedia](https://en.wikipedia.org/wiki/List_comprehension) has to say:
+In the post,["FizzBuzz, A Deep Navel Gaze Into"](http://dave.fayr.am/posts/2012-10-4-finding-fizzbuzz.html), the author solves the problem with monad comprehensions. I'd like to examine why we would want monad comprehensions, in the first place. Why not plain list comprehensions?
+Let's start with a reminder of what list comprehensions are. Here's what [wikipedia](https://en.wikipedia.org/wiki/List_comprehension) has to say:
 
 > A list comprehension is a syntactic construct available in some programming
 > languages for creating a list based on existing lists. It follows the form of
@@ -122,7 +122,7 @@ data Maybe a = Just a
 ```
 Now, this works out for us, because `Maybe` is a monad.
 
-This means we can use Maybe as the arbitrary Monad for our monad comprehension.
+This means we can use Maybe as the arbitrary monad for our monad comprehension.
 
 Compare 
 ```
@@ -236,7 +236,6 @@ Ah, so we're done. No! In our hypothetical scenario, the client now
 wants `"bang!" :: String` to be returned when a number is a prime.
 Not a problem. Here's what we would do in the interpreter:
 ```
-
 *FizzBuzz Data.Semigroup> :m + Data.Numbers.Primes
 *FizzBuzz Data.Semigroup Data.Numbers.Primes>
 
