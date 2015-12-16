@@ -36,8 +36,6 @@ Next, we'll have to add the [associative](https://hackage.haskell.org/package/se
 We do this because we'd like to have each number checked by both functions, like so:
 ```
 *FizzBuzz Data.Semigroup> (buzz5 <> fizz3) 10
-```
-```
 ["buzz"]
 ```
 So, what just happened? To begin with, let's look at what happens when each function evaluates `10`.
@@ -239,9 +237,8 @@ Not a problem. Here's what we would do in the interpreter:
 *FizzBuzz Data.Semigroup> :m + Data.Numbers.Primes
 *FizzBuzz Data.Semigroup Data.Numbers.Primes>
 *FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_isPrime = (\i -> ["bang!" | isPrime i]) :: (Integral a) => a -> Option String
-```
 *FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_fizzbuzz = opt_fizz3 <> opt_buzz5 <> opt_isPrime
-
+```
 *FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_fb = (\i -> fromMaybe (show i) $ getOption $ opt_fizzbuzz i)
 *FizzBuzz Data.Semigroup Data.Numbers.Primes> map opt_fb [1 .. 15]
 ["1","bang!","fizzbang!","4","buzzbang!","fizz","bang!","8","fizz","buzz","bang!","fizz","bang!","14","fizzbuzz"]
