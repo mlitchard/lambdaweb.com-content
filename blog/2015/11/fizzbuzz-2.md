@@ -152,10 +152,11 @@ Now we're much closer to the spec. We need to replace the `Nothing` value with t
 
 Fortunately, there is a function for that: [fromMaybe](https://hackage.haskell.org/package/base-4.8.1.0/docs/Data-Maybe.html)
 
->    fromMaybe :: a -> Maybe a -> a 
+```haskell
+fromMaybe :: a -> Maybe a -> a 
 
->    The fromMaybe function takes a default value and and Maybe value. If the Maybe is Nothing, it returns the default values; otherwise, it returns the value contained in the Maybe.
-
+The fromMaybe function takes a default value and and Maybe value. If the Maybe is Nothing, it returns the default values; otherwise, it returns the value contained in the Maybe.
+```
 So we can do this:
 
 ```haskell
