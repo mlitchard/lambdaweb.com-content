@@ -15,7 +15,7 @@ Let's start with a reminder of what list comprehensions are. Here's what [wikipe
 
 So in the case of what we'd be looking for in a fizzbuzz program:
 
-```
+```haskell
 FizzBuzz> (\i -> ["fizz" | i `mod` 3 == 0]) 15
 ["fizz"]
 
@@ -25,7 +25,7 @@ FizzBuzz> (\i -> ["buzz" | i `mod` 5 == 0]) 11
 That empty list will prove to be a problem, we'll have to come up with
 a better way to represent failure. For now, let's bind these functions
 to names.
-```
+```haskell
 FizzBuzz> let fizz3 = (\i -> ["fizz" | i `mod` 3 == 0])
 FizzBuzz> let buzz5 = (\i -> ["buzz" | i `mod` 5 == 0])
 ```
@@ -34,32 +34,29 @@ Next, we'll have to add the [associative](https://hackage.haskell.org/package/se
 FizzBuzz> :m + Data.Semigroup
 ```
 We do this because we'd like to have each number checked by both functions, like so:
-```
+```haskell
 FizzBuzz Data.Semigroup> (buzz5 <> fizz3) 10
 ["buzz"]
 ```
 So, what just happened? To begin with, let's look at what happens when each function evaluates `10`.
-```
+```haskell
 FizzBuzz Data.Semigroup> fizz3 10 
 []
-```
-```
 FizzBuzz Data.Semigroup> buzz5 10
 ["buzz"]
 ```
 And what happens when we apply the `(<>)` associative operator to the evaluation of `fizz3 10` and `buzz5 10`.
-```
+```haskell
 FizzBuzz Data.Semigroup> [] <> ["buzz"]
 ["buzz"]
 ```
 ghci will confirm the following are logically equivilent:
-```
-
+```haskell
 FizzBuzz Data.Semigroup> ([] <> ["buzz"]) == ((buzz5 <> fizz3) 10)
 True
 ```
 from [`Data.Semigroup`](https://hackage.haskell.org/package/semigroups-0.18.0.1/docs/Data-Semigroup.html)
-```
+```haskell
 class Semigroup a where 
 
 Minimal complete definition
@@ -79,7 +76,7 @@ If a is also a Monoid we further require
 (<>) = mappend
 ```
 And the [] instance of Semigroup
-```
+```haskell
 instance Semigroup [a] where
   (<>) = (++)
 ```
@@ -87,7 +84,7 @@ defines plusplus as the associative operator.
 
 This would be fine, except the requirement that the number being evaluated
 should be the output if it does not evaluate to being either divisible by 3 or 5. Without monadic comprehensions, we would have to do something like this
-```
+```haskell
 badbuzz :: Int -> String
 badbuzz a =
   case (fizzbuzz') of
@@ -96,7 +93,6 @@ badbuzz a =
   where
     fizzbuzz' = ["fizz" | a `mod` 3 == 0] <>
                 ["buzz" | a `mod` 5 == 0] <>
-
 ```
 The case control structure is the wrong tool for the job. But we have to use
 that, or guards, or if-then-else; unless we have other options. We do.
@@ -113,7 +109,7 @@ that extra control construct. Additionally, it doesn't actually represent
 what we want. `[]` is a stand-in for `Nothing` which represents a failed
 evaluation. That's what we actually want. The `Maybe` type, and it's `Nothing` value.
 
-```
+```haskell
 data Maybe a = Just a
              | Nothing
                 deriving Show
@@ -123,7 +119,7 @@ Now, this works out for us, because `Maybe` is a monad.
 This means we can use Maybe as the arbitrary monad for our monad comprehension.
 
 Compare 
-```
+```haskell
 FizzBuzz Data.Semigroup> let buzz5 = (\i -> ["buzz" | i `mod` 5 == 0]) :: (Integral a) => a -> [String]
 
 FizzBuzz Data.Semigroup> let fizz3 = (\i -> ["fizz" | i `mod` 3 == 0]) :: (Integral a) => a -> [String]
@@ -134,7 +130,7 @@ FizzBuzz Data.Semigroup> :t fizzbuzz
 fizzbuzz :: Integral a => a -> [String]
 ```
 with,
-```
+```haskell
 FizzBuzz Data.Semigroup> :set -XMonadComprehensions
 
 FizzBuzz Data.Semigroup> let may_buzz5 = (\i -> ["buzz" | i `mod` 5 == 0]) :: (Integral a) => a -> Maybe String
@@ -148,7 +144,7 @@ may_fizzbuzz :: Integral a => a -> Maybe String
 
 We have two monads, a List and a Maybe. The list proves to not quite express failure as precisely as we would like. With monad comprehensions, we have the option of a more precise monad with a built-in value that expresses failure in a more precise way.
 
-```
+```haskell
 FizzBuzz Data.Semigroup> map may_fizzbuzz [1,2 .. 10]
 [Nothing,Nothing,Just "fizz",Nothing,Just "buzz",Just "fizz",Nothing,Nothing,Just "fizz",Just "buzz"]
 ```
@@ -162,8 +158,7 @@ Fortunately, there is a function for that: [fromMaybe](https://hackage.haskell.o
 
 So we can do this:
 
-```
-
+```haskell
 FizzBuzz Data.Semigroup> let mf = (\i -> fromMaybe (show i) $ may_fizzbuzz i)
 FizzBuzz Data.Semigroup> map mf [1 .. 15]
 ["1","2","fizz","4","buzz","fizz","7","8","fizz","buzz","11","fizz","13","14","fizzbuzz"]
@@ -174,16 +169,15 @@ So, that's the gist. But we're not quite finished.
 ## The Trouble With Maybe
 
 Here's the standard Haskell Definition for the Maybe monoid
-```
+```haskell
 Monoid a => Monoid (Maybe a)
 ```
-
 This is gross, it's only a historical accident that it was allowed.
 The correct thing to do is create a `Monoid` from a `Semigroup`.
 The next best thing is the [`Option`](https://hackage.haskell.org/package/semigroups-0.18.0.1/docs/Data-Semigroup.html#t:Option) type.
 
 ### A better monoid for Maybe
-```
+```haskell
 newtype Option a 
 
 Option is effectively Maybe with a better instance of Monoid, built off of an underlying Semigroup instead of an underlying Monoid.
@@ -196,7 +190,7 @@ Option
 getOption :: Maybe a
 ```
 So, a slight adjustment to our definitions is required.
-```
+```haskell
 FizzBuzz Data.Semigroup> let opt_fizz3 = (\i -> ["fizz" | i `mod` 3 == 0]) :: (Integral a) => a -> Option String
 
 FizzBuzz Data.Semigroup> let opt_buzz5 = (\i -> ["buzz" | i `mod` 5 == 0]) :: (Integral a) => a -> Option String
@@ -212,14 +206,14 @@ FizzBuzz Data.Semigroup> :t opt_fb
 opt_fb :: (Show a, Integral a) => a -> String
 ```
 Now we can do the exact same thing before, with code that is more sound.
-```
+```haskell
 FizzBuzz Data.Semigroup> map opt_fb [1 .. 15]
 ["1","2","fizz","4","buzz","fizz","7","8","fizz","buzz","11","fizz","13","14","fizzbuzz"]
 ```
 We worked out a solution to this problem entirely in the interpreter,
 here's what the function would look like:
 
-```
+```haskell
 fizzbuzz :: Integer -> String
 fizzbuzz i = fromMaybe (show i) $ getOption fizzbuzz'
   where
@@ -232,8 +226,7 @@ Ah, so we're done. No! In our hypothetical scenario, the client now
 wants `"bang!" :: String` to be returned when a number is a prime.
 Not a problem. Here's what we would do in the interpreter:
 
-
-```
+```haskell
 FizzBuzz Data.Semigroup> :m + Data.Numbers.Primes
 FizzBuzz Data.Semigroup Data.Numbers.Primes>
 FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_isPrime = (\i -> ["bang!" | isPrime i]) :: (Integral a) => a -> Option String
@@ -244,13 +237,13 @@ FizzBuzz Data.Semigroup Data.Numbers.Primes> map opt_fb [1 .. 15]
 ```
 Adding the feature to `fizzbuzz` would look like this:
 
-```
+```haskell
 fizzbuzz :: Integer -> String
 fizzbuzz i = fromMaybe (show i) $ getOption fizzbuzz'
   where
     fizzbuzz' =
       ["fizz " | i `rem` 3 == 0] <>
-      ["buzz " | i `rem` 5 == 0] 
+      ["buzz " | i `rem` 5 == 0] <>
       ["bang!" | isPrime i]
 ```
 Whew. Okay. Finally done defining fizzbuzz. We can compose more "if number has property x return string y" features as needed, and easily.
@@ -263,7 +256,7 @@ Step 1 is admitting we don't know how to do that in a way that is not naive. So 
 Google brings us to a [wiki page](https://wiki.haskell.org/The_Fibonacci_sequence#Constant-time_implementations) that tells us what we need to know.
 
 ### Binet's formula
-```
+```haskell
 fib n = round $ phi ** fromIntegral n / sq5
   where
     sq5 = sqrt 5 :: Double
@@ -271,7 +264,7 @@ fib n = round $ phi ** fromIntegral n / sq5
 ```
 So let's make some definitions in the interpreter and see what we can do.
 
-```
+```haskell
 FizzBuzz Data.Semigroup Data.Numbers.Primes> let sq5 = sqrt 5 :: Double
 FizzBuzz Data.Semigroup Data.Numbers.Primes> let phi = (1 + sq5) / 2
 FizzBuzz Data.Semigroup Data.Numbers.Primes> let fib = (\n -> round $ phi ** fromIntegral n / sq5)
