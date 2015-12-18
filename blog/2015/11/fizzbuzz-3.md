@@ -30,8 +30,10 @@ In our case we would need an `a :: Integer`. And lucky for us,
 
 Let's unpack `read`, there's something cool going on there, and it's called
 `id`.
-    The 'read' function reads input from a string, which must be
-    completely consumed by the input process.
+
+> The 'read' function reads input from a string, which must be
+> completely consumed by the input process.
+
 ```haskell
 read :: Read a => String -> a
 read s = either error id (readEither s)
@@ -40,13 +42,15 @@ We'll go left to right, starting with the [`either`](https://hackage.haskell.org
 ```haskell
 either :: (a -> c) -> (b -> c) -> Either a b -> c 
 ```
-     Case analysis for the Either type. If the value is Left a, apply the first function to a; if it is Right b, apply the second function to b.
+
+> Case analysis for the Either type. If the value is Left a, apply the first function to a; if it is Right b, apply the second function to b.
 
 Both [`error`](http://hackage.haskell.org/package/base-4.8.1.0/docs/Prelude.html#v:error) and [`id`](http://hackage.haskell.org/package/base-4.8.1.0/docs/Prelude.html#v:id) use a returned value given by [`readEither`](https://hackage.haskell.org/package/base-4.8.1.0/docs/Text-Read.html).
 ```haskell
 readEither :: Read a => String -> Either String a 
 ```
-     Parse a string using the Read instance. Succeeds if there is exactly one valid result. A Left value indicates a parse error.
+
+> Parse a string using the Read instance. Succeeds if there is exactly one valid result. A Left value indicates a parse error.
 
 So if someone wanted to be a jerkface and give our fizzbuzz program a string that no one would recognize as an `Integer`, but we expected one, `readEither` would do this:
 ```haskell
@@ -69,10 +73,12 @@ convertToDigit :: String -> Either String Integer
 convertToDigit str =
 maybeToEither "Not An Integer" (readMaybe str)
 ```
-Does `Left String` looks awful to you? It should. We have a strong type system in Haskell, but it can't help us if we resort to "quick and dirty". We can do better.
+Does `Left String` looks awful to you? It should. We have a strong type system in Haskell, but it can't help us if we resort to the quick and the dirty. We can do better.
+
 ```haskell
 data FizzError = NotAnInteger deriving Show
 ```
+
 If you think that's overkill for one error condition you'd be right. We'll add more values soon.
 
 In the meantime we can improve the above function like so:
@@ -81,10 +87,12 @@ convertToDigit :: String -> Either FizzError Integer
 convertToDigit str =
 maybeToEither NotAndInteger (readMaybe str)
 ```
+
 Much better. Having handled that error condition, what others could we encounter? Before we transform the `String` to an `Integer`, we need to make sure we get exactly one `String`. We could just drop excess input silently, but this might 
 lead a person that the extraneous input was being used somehow. Best to just 
 handle this condition, as we need to address the condition of getting no
 input as well. We can express these errors as values of our sum type, `FizzError`.
+
 ```haskell
 data FizzError =
      NotAnInteger
@@ -100,6 +108,7 @@ mustHaveOne _        = Left OnlyOne
 We *could* have the compiler generate a `Show` instance for us, but that
 would be impolite to our users. Instead, let's be more clear about our 
 expectations when they err.
+
 ```haskell
 instance Show FizzError where
   show NotAnInteger = "not an integer"
@@ -108,6 +117,7 @@ instance Show FizzError where
   show NoInput      = "You need to pass in an integer that describes how" ++
                       " many fibonacci numbers you want for fizzbuzz."
 ```
+
 We now have a function accounts for one error condition, another accounting for the other two, the fibnonacci feeder function and 
 the actual fizzbuzz function.
 
@@ -115,8 +125,8 @@ And all we have to do is put it together right?
 Sure, but there's a bad way where we pretend that haskell doesn't have
 support for monads, and there's a way using monads that make the bad way better.
 
-
 Here's what happens if we use case as a control structure.
+
 ```haskell
 main :: IO ()
 main = do
@@ -130,17 +140,21 @@ main = do
                     Right $ map (fizzbuzz . fib) ((\x -> [1 .. x]) int)
   putStrLn (show res)
 ```
+
 `case` becomes staircase. Hard to read, hard to modify. Painful to behold.
 We can do better, because [`Either`](https://hackage.haskell.org/package/base-4.8.1.0/docs/Data-Either.html) is a monad.
+
 ```haskell
 instance Monad (Either e) where
   Left  l >>= _ = Left l
   Right r >>= k = k r
 ```
+
 What this means is, with a little modification we can make a cleaner
 [control structure](https://www.fpcomplete.com/school/starting-with-haskell/basics-of-haskell/10_Error_Handling) that is easy to read and extend.
 
 First we change the semantics of our code a little.
+
 ```haskell
 fizzbuzz :: Integer -> Either FizzError String
 fizzbuzz i = Right $ fromMaybe (show i) $ getOption fizzbuzz'
@@ -156,11 +170,15 @@ fizzbuzz i = Right $ fromMaybe (show i) $ getOption fizzbuzz'
         sq5 = sqrt 5 :: Double
         phi = (1 + sq5) / 2
 ```
+
 We'll benefit from using this lambda
+
 ```haskell
     (\x -> Right [1 .. x])
 ```
+
 Then we can do this:
+
 ```haskell
 fizzBuzzFib :: [String] -> Either FizzError [String]
 fizzBuzzFib str =
@@ -170,6 +188,7 @@ fizzBuzzFib str =
   convertToDigit         =<<
   mustHaveOne str
 ```
+
 Before running the commands below, take a look at the [.cabal file](https://www.haskell.org/cabal/users-guide/developing-packages.html#editing-the-.cabal-file) and get a feel for how the build is being organized. Also make sure `$HOME/.local/bin` is in your `$PATH`.
 
 We can now see some fizzbuzz action. The expected input is the an `Integer` n,
