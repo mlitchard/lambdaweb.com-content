@@ -30,8 +30,8 @@ In our case we would need an `a :: Integer`. And lucky for us,
 
 Let's unpack `read`, there's something cool going on there, and it's called
 `id`.
-> The 'read' function reads input from a string, which must be
-> completely consumed by the input process.
+>    The 'read' function reads input from a string, which must be
+>    completely consumed by the input process.
 ```haskell
 read :: Read a => String -> a
 read s = either error id (readEither s)
@@ -40,13 +40,13 @@ We'll go left to right, starting with the [`either`](https://hackage.haskell.org
 ```haskell
 either :: (a -> c) -> (b -> c) -> Either a b -> c 
 ```
-> Case analysis for the Either type. If the value is Left a, apply the first function to a; if it is Right b, apply the second function to b.
+>     Case analysis for the Either type. If the value is Left a, apply the first function to a; if it is Right b, apply the second function to b.
 
 Both [`error`](http://hackage.haskell.org/package/base-4.8.1.0/docs/Prelude.html#v:error) and [`id`](http://hackage.haskell.org/package/base-4.8.1.0/docs/Prelude.html#v:id) use a returned value given by [`readEither`](https://hackage.haskell.org/package/base-4.8.1.0/docs/Text-Read.html).
 ```haskell
 readEither :: Read a => String -> Either String a 
 ```
-> Parse a string using the Read instance. Succeeds if there is exactly one valid result. A Left value indicates a parse error.
+>     Parse a string using the Read instance. Succeeds if there is exactly one valid result. A Left value indicates a parse error.
 
 So if someone wanted to be a jerkface and give our fizzbuzz program a string that no one would recognize as an `Integer`, but we expected one, `readEither` would do this:
 ```haskell
