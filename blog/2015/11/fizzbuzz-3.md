@@ -242,4 +242,4 @@ Enough messing around, buzz me!
 
 Composition is the solution to the unprecedented complexity we find in software engineering, compared to other engineering disciplines, and [monads](https://www.youtube.com/watch?v=ZhuHCtR3xq8) is one tool that allow us to compose constructs [that aren't functions](http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html).
 
-
+<footer> This is part III of the Haskell As An Engineering Language Series. Part II is <a href="/blog/2015/11/fizzbuzz-2">Here</a></footer>
