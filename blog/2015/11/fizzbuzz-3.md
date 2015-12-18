@@ -6,7 +6,7 @@ What do we have thus far?
 2. A feeder function for fizzbuzz.
 3. No way for anyone to use these.
 
-Okay then, lets go ahead and make a command line executable for our fuzzbuzz.
+Well then, lets go ahead and make a command line executable for our fuzzbuzz.
 
 ```haskell
 module Main where
@@ -17,10 +17,12 @@ main :: IO ()
 main = do
   input <- getArgs
 ```
-Okay now what. `getArgs` has type `String :: IO ()`, and we need an `Integer`.
+
+Okay, now what? `getArgs` has type `String :: IO ()`, and we need an `Integer`.
 Well, can we get a `String -> Integer`? Asking [Hoogle](https://www.haskell.org/hoogle/) we get a big fat "Nope". 
 
 But look at what we did find:
+
 ```haskell
 read :: Read a => String -> a
 ```
@@ -82,6 +84,7 @@ data FizzError = NotAnInteger deriving Show
 If you think that's overkill for one error condition you'd be right. We'll add more values soon.
 
 In the meantime we can improve the above function like so:
+
 ```haskell
 convertToDigit :: String -> Either FizzError Integer
 convertToDigit str =
@@ -160,8 +163,8 @@ fizzbuzz :: Integer -> Either FizzError String
 fizzbuzz i = Right $ fromMaybe (show i) $ getOption fizzbuzz'
   where
     fizzbuzz' =
-      ["fizz " | i `rem` 3 == 0] <>
-      ["buzz " | i `rem` 5 == 0] <>
+      ["fizz" | i `rem` 3 == 0] <>
+      ["buzz" | i `rem` 5 == 0] <>
       ["bang!" | isPrime i]
 
     fib :: Integer -> Either FizzError Integer
@@ -215,26 +218,26 @@ And Again
 Enough messing around, buzz me!
 `mlitchard@mlitchard-personal:~/projects/git/fizzbuzzfib$ fizzbuzzfib-exe 20`
 
-"1"
-"1"
-"bang!"
-"fizz bang!"
-"buzz bang!"
-"8"
-"bang!"
-"fizz "
-"34"
-"buzz "
-"bang!"
-"fizz "
-"bang!"
-"377"
-"buzz "
-"fizz "
-"bang!"
-"2584"
-"4181"
-"fizz buzz "
+> "1"
+> "1"
+> "bang!"
+> "fizzbang!"
+> "buzzbang!"
+> "8"
+> "bang!"
+> "fizz "
+> "34"
+> "buzz "
+> "bang!"
+> "fizz "
+> "bang!"
+> "377"
+> "buzz "
+> "fizz "
+> "bang!"
+> "2584"
+> "4181"
+> "fizzbuzz "
 
 
 Composition is the solution to the unprecedented complexity we find in software engineering, compared to other engineering disciplines, and [monads](https://www.youtube.com/watch?v=ZhuHCtR3xq8) is one tool that allow us to compose constructs [that aren't functions](http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html).
