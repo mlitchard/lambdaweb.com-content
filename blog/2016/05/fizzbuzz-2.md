@@ -165,7 +165,7 @@ FizzBuzz Data.Semigroup> map mf [1 .. 15]
 ["1","2","fizz","4","buzz","fizz","7","8","fizz","buzz","11","fizz","13","14","fizzbuzz"]
 ```
 
-So, that's the gist. But we're not quite finished.
+So, that's the gist. But we're not quite finished. Maybe and String are troublesome.
 
 ## The Trouble With Maybe
 
@@ -190,26 +190,35 @@ Option
 
 getOption :: Maybe a
 ```
+## The Trouble With [`String`](https://mail.haskell.org/pipermail/haskell-cafe/2014-June/114745.html)
+
 So, a slight adjustment to our definitions is required.
 ```haskell
-FizzBuzz Data.Semigroup> let opt_fizz3 = (\i -> ["fizz" | i `mod` 3 == 0]) :: (Integral a) => a -> Option String
+FizzBuzz Data.Semigroup> :set -XOverloadedStrings
+FizzBuzz Data.Semigroup> let opt_fizz3 = (\i -> ["fizz" | i `mod` 3 == 0]) :: (Integral a) => a -> Option Text
 
-FizzBuzz Data.Semigroup> let opt_buzz5 = (\i -> ["buzz" | i `mod` 5 == 0]) :: (Integral a) => a -> Option String
+FizzBuzz Data.Semigroup> let opt_buzz5 = (\i -> ["buzz" | i `mod` 5 == 0]) :: (Integral a) => a -> Option Text
 
 FizzBuzz Data.Semigroup> let opt_fizzbuzz = opt_fizz3 <> opt_buzz5
 
 FizzBuzz Data.Semigroup> :t opt_fizzbuzz
-opt_fizzbuzz :: Integral a => a -> Option String
+opt_fizzbuzz :: Integral a => a -> Option Text
 
-FizzBuzz Data.Semigroup> let opt_fb = (\i -> fromMaybe (show i) $ getOption $ opt_fizzbuzz i)
+FizzBuzz Data.Semigroup> let opt_fb = (\i -> option (show i) id $ opt_fizzbuzz i)
 
 FizzBuzz Data.Semigroup> :t opt_fb
-opt_fb :: (Show a, Integral a) => a -> String
+opt_fb :: (Show a, Integral a) => a -> Text
 ```
 Now we can do the exact same thing before, with code that is more sound.
 ```haskell
 FizzBuzz Data.Semigroup> map opt_fb [1 .. 15]
 ["1","2","fizz","4","buzz","fizz","7","8","fizz","buzz","11","fizz","13","14","fizzbuzz"]
+
+Let's go over what we did.
+
+`:set -XOverloadedStrings` allows an automatic transformation from the terrible `String` type to the sane `Text` type.
+
+
 ```
 We worked out a solution to this problem entirely in the interpreter,
 here's what the function would look like:
@@ -248,36 +257,5 @@ fizzbuzz i = fromMaybe (show i) $ getOption fizzbuzz'
       ["bang!" | isPrime i]
 ```
 Whew. Okay. Finally done defining fizzbuzz. We can compose more "if number has property x return string y" features as needed, and easily.
-
-But we're not done.
-The client has changed requirements yet again and needs the input type to be a fibonnacci number. Not a problem.
-Let's work out how to generate the fibonnacci sequence.
-Step 1 is admitting we don't know how to do that in a way that is not naive. So Google Away!
-
-Google brings us to a [wiki page](https://wiki.haskell.org/The_Fibonacci_sequence#Constant-time_implementations) that tells us what we need to know.
-
-### Binet's formula
-```haskell
-fib n = round $ phi ** fromIntegral n / sq5
-  where
-    sq5 = sqrt 5 :: Double
-    phi = (1 + sq5) / 2
-```
-So let's make some definitions in the interpreter and see what we can do.
-
-```haskell
-FizzBuzz Data.Semigroup Data.Numbers.Primes> let sq5 = sqrt 5 :: Double
-FizzBuzz Data.Semigroup Data.Numbers.Primes> let phi = (1 + sq5) / 2
-FizzBuzz Data.Semigroup Data.Numbers.Primes> let fib = (\n -> round $ phi ** fromIntegral n / sq5)
-FizzBuzz Data.Semigroup Data.Numbers.Primes> map fib [1 .. 10]
-[1,1,2,3,5,8,13,21,34,55]
-FizzBuzz Data.Semigroup Data.Numbers.Primes> map (opt_fb . fib) [1 .. 15]
-["1","1","bang!","fizzbang!","buzzbang!","8","bang","fizz","34","buzz","bang!","fizz","bang!","377","buzz"]
-```
-The key word here is _composition_ . See how easy it was to bring it all together? Monad comprehensions makes this possible.
-
-But since this is an engineering exercise, we're not done.
-In [Part 3](/blog/2015/11/fizzbuzz-3) we'll look at I/O, which means error
-handling. Which means a big bowl of yuck, and monads to the rescue.
 
 <footer> This is part II of the Haskell As An Engineering Language Series. Part I is <a href="/blog/2015/11/fizzbuzz-1">Here</a></footer>
