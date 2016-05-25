@@ -24,4 +24,25 @@ Examining this problem also provides opportunity to examine Haskell itself:
   Here is where things get dirty: error handling. I'll show you the dirt and how we can use `Either` monad to clean it up.
 
 ## [Part IV](/blog/2016/05/fizzbuzz-4)
+  Well we have a pretty good idea of what this should look like by now. Let's start testing with Hspec and QuickCheck.
+
+## [Part V](blog/2016/05/fizzbuzz-5)
+  The tests ran rather slow? Why? Profiling might find out. (Spoiler: it does.)
+
+## [Part V](/blog/2016/05/fizzbuzz-6)
+  The Spec Changes! The boss has said the Eye of Sauron has looked upon the project and requested the integers for the fizzbuzz machine be generated with a fibonacci generator. We'll do it of course, but to what nefarious ends?
+
+## [Part VI](/blog/2016/05/fizzbuzz-7)
+  With the new changes, we'll need to change the tests. Why do we write the code first and the tests second? Find out with this post.
+
+## [Part VII](/blog/2016/05/fizzbuzz-8)
+  Bringing Travis CI into the mix
+
+## [Part VII](/blog/2016/05/fizzbuzz-9)
+  Benchmarking with Criterion!
+
+## [Part VII](/blog/2016/05/fizzbuzz-10)
+  Bringing Travis CI into the mix
+  
+## [Part IV](/blog/2016/05/fizzbuzz-11)
   The Spec Changes! The new fizzbuzz machine is so popular it spreads to other teams. These teams don't like the unix shell as an interface. What do we do?
