@@ -41,8 +41,5 @@ Examining this problem also provides opportunity to examine Haskell itself:
 ## [Part VII](/blog/2016/05/fizzbuzz-9)
   Benchmarking with Criterion!
 
-## [Part VII](/blog/2016/05/fizzbuzz-10)
-  Bringing Travis CI into the mix
-  
-## [Part IV](/blog/2016/05/fizzbuzz-11)
+## [Part IV](/blog/2016/05/fizzbuzz-10)
   The Spec Changes! The new fizzbuzz machine is so popular it spreads to other teams. These teams don't like the unix shell as an interface. What do we do?
