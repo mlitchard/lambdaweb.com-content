@@ -1,8 +1,8 @@
 ## Problem Specification
 
-This program will return a `"fizz" :: String` when it evaluates a number to
-be divisible by 3, a `"buzz" :: String` when it evaluates a number to be
-divisible by 5, and `"fizzbuzz" :: String` when a number is divisible by both 3 and 5. When a number fails to evaluate
+This program will return a `"Fizz" :: String` when it evaluates a number to
+be divisible by 3, a `"Buzz" :: String` when it evaluates a number to be
+divisible by 5, and `"Fizz Buzz" :: String` when a number is divisible by both 3 and 5. When a number fails to evaluate
 as either being divisible by 3 or 5, the function returns " < some number > " :: String.
 
 In the post,["FizzBuzz, A Deep Navel Gaze Into"](http://dave.fayr.am/posts/2012-10-4-finding-fizzbuzz.html), the author solves the problem with monad comprehensions. I'd like to examine why we would want monad comprehensions, in the first place. Why not plain list comprehensions?
@@ -16,18 +16,18 @@ Let's start with a reminder of what list comprehensions are. Here's what [wikipe
 So in the case of what we'd be looking for in a fizzbuzz program:
 
 ```haskell
-FizzBuzz> (\i -> ["fizz" | i `mod` 3 == 0]) 15
-["fizz"]
+FizzBuzz> (\i -> ["Fizz" | i `mod` 3 == 0]) 15
+["Fizz "]
 
-FizzBuzz> (\i -> ["buzz" | i `mod` 5 == 0]) 11
+FizzBuzz> (\i -> ["Buzz" | i `mod` 5 == 0]) 11
 []
 ```
 That empty list will prove to be a problem, we'll have to come up with
 a better way to represent failure. For now, let's bind these functions
 to names.
 ```haskell
-FizzBuzz> let fizz3 = (\i -> ["fizz" | i `mod` 3 == 0])
-FizzBuzz> let buzz5 = (\i -> ["buzz" | i `mod` 5 == 0])
+FizzBuzz> let fizz3 = (\i -> ["Fizz" | i `mod` 3 == 0])
+FizzBuzz> let buzz5 = (\i -> ["Buzz" | i `mod` 5 == 0])
 ```
 Next, we'll have to add the [associative](https://hackage.haskell.org/package/semigroups-0.18.0.1/docs/Data-Semigroup.html) operator `(<>)`.
 ```
@@ -36,23 +36,23 @@ FizzBuzz> :m + Data.Semigroup
 We do this because we'd like to have each number checked by both functions, like so:
 ```haskell
 FizzBuzz Data.Semigroup> (buzz5 <> fizz3) 10
-["buzz"]
+["Buzz"]
 ```
 So, what just happened? To begin with, let's look at what happens when each function evaluates `10`.
 ```haskell
 FizzBuzz Data.Semigroup> fizz3 10 
 []
 FizzBuzz Data.Semigroup> buzz5 10
-["buzz"]
+["Buzz"]
 ```
 And what happens when we apply the `(<>)` associative operator to the evaluation of `fizz3 10` and `buzz5 10`.
 ```haskell
-FizzBuzz Data.Semigroup> [] <> ["buzz"]
-["buzz"]
+FizzBuzz Data.Semigroup> [] <> ["Buzz"]
+["Buzz"]
 ```
 ghci will confirm the following are logically equivilent:
 ```haskell
-FizzBuzz Data.Semigroup> ([] <> ["buzz"]) == ((buzz5 <> fizz3) 10)
+FizzBuzz Data.Semigroup> ([] <> ["Buzz "]) == ((buzz5 <> fizz3) 10)
 True
 ```
 from [`Data.Semigroup`](https://hackage.haskell.org/package/semigroups-0.18.0.1/docs/Data-Semigroup.html)
@@ -91,8 +91,8 @@ badbuzz a =
     []  -> show a
     res -> unwords res
   where
-    fizzbuzz' = ["fizz" | a `mod` 3 == 0] <>
-                ["buzz" | a `mod` 5 == 0] <>
+    fizzbuzz' = ["Fizz" | a `mod` 3 == 0] <>
+                ["Buzz" | a `mod` 5 == 0] <>
 ```
 The case control structure is the wrong tool for the job. But we have to use
 that, or guards, or if-then-else; unless we have other options. We do.
@@ -104,7 +104,7 @@ definition from [GHC's MonadComprehensions page](https://ghc.haskell.org/trac/gh
 > [ f x | x <- xs, x>4 ]
 > is interpreted in an arbitrary monad, rather than being restricted to lists.
 
-Now, what is this monad we want to use? Right now, `fizzbuzz'` evaluates to `["fizz"]`, `["buzz"]`, `["fizzbuzz"]` or `[]`. It's the empty list that requires
+Now, what is this monad we want to use? Right now, `fizzbuzz'` evaluates to `["Fizz"]`, `["Buzz"]`, `["FizzBuzz"]` or `[]`. It's the empty list that requires
 that extra control construct. Additionally, it doesn't actually represent
 what we want. `[]` is a stand-in for `Nothing` which represents a failed
 evaluation. That's what we actually want. The `Maybe` type, and it's `Nothing` value.
@@ -120,9 +120,9 @@ This means we can use Maybe as the arbitrary monad for our monad comprehension.
 
 Compare 
 ```haskell
-FizzBuzz Data.Semigroup> let buzz5 = (\i -> ["buzz" | i `mod` 5 == 0]) :: (Integral a) => a -> [String]
+FizzBuzz Data.Semigroup> let buzz5 = (\i -> ["Buzz" | i `mod` 5 == 0]) :: (Integral a) => a -> [String]
 
-FizzBuzz Data.Semigroup> let fizz3 = (\i -> ["fizz" | i `mod` 3 == 0]) :: (Integral a) => a -> [String]
+FizzBuzz Data.Semigroup> let fizz3 = (\i -> ["Fizz" | i `mod` 3 == 0]) :: (Integral a) => a -> [String]
 
 FizzBuzz Data.Semigroup> let fizzbuzz = fizz3 <> buzz5 
 
@@ -133,9 +133,9 @@ with,
 ```haskell
 FizzBuzz Data.Semigroup> :set -XMonadComprehensions
 
-FizzBuzz Data.Semigroup> let may_buzz5 = (\i -> ["buzz" | i `mod` 5 == 0]) :: (Integral a) => a -> Maybe String
+FizzBuzz Data.Semigroup> let may_buzz5 = (\i -> ["Buzz" | i `mod` 5 == 0]) :: (Integral a) => a -> Maybe String
 
-FizzBuzz Data.Semigroup> let may_fizz3 = (\i -> ["fizz" | i `mod` 3 == 0]) :: (Integral a) => a -> Maybe String
+FizzBuzz Data.Semigroup> let may_fizz3 = (\i -> ["Fizz" | i `mod` 3 == 0]) :: (Integral a) => a -> Maybe String
 
 FizzBuzz> let may_fizzbuzz = may_fizz3 <> may_buzz5
 FizzBuzz Data.Semigroup> :t may_fizzbuzz
@@ -146,7 +146,7 @@ We have two monads, a List and a Maybe. The list proves to not quite express fai
 
 ```haskell
 FizzBuzz Data.Semigroup> map may_fizzbuzz [1,2 .. 10]
-[Nothing,Nothing,Just "fizz",Nothing,Just "buzz",Just "fizz",Nothing,Nothing,Just "fizz",Just "buzz"]
+[Nothing,Nothing,Just "Fizz",Nothing,Just "Buzz",Just "Fizz",Nothing,Nothing,Just "Fizz",Just "Buzz"]
 ```
 Now we're much closer to the spec. We need to replace the `Nothing` value with the number that failed the test and remove the `Just` constructor.
 
@@ -162,7 +162,7 @@ So we can do this:
 ```haskell
 FizzBuzz Data.Semigroup> let mf = (\i -> fromMaybe (show i) $ may_fizzbuzz i)
 FizzBuzz Data.Semigroup> map mf [1 .. 15]
-["1","2","fizz","4","buzz","fizz","7","8","fizz","buzz","11","fizz","13","14","fizzbuzz"]
+["1","2","Fizz","4","Buzz","Fizz","7","8","Fizz","Buzz","11","Fizz","13","14","FizzBuzz"]
 ```
 
 So, that's the gist. But we're not quite finished. Maybe and String are troublesome.
@@ -195,9 +195,9 @@ getOption :: Maybe a
 So, a slight adjustment to our definitions is required.
 ```haskell
 FizzBuzz Data.Semigroup> :set -XOverloadedStrings
-FizzBuzz Data.Semigroup> let opt_fizz3 = (\i -> ["fizz" | i `mod` 3 == 0]) :: (Integral a) => a -> Option Text
+FizzBuzz Data.Semigroup> let opt_fizz3 = (\i -> ["Fizz" | i `mod` 3 == 0]) :: (Integral a) => a -> Option Text
 
-FizzBuzz Data.Semigroup> let opt_buzz5 = (\i -> ["buzz" | i `mod` 5 == 0]) :: (Integral a) => a -> Option Text
+FizzBuzz Data.Semigroup> let opt_buzz5 = (\i -> ["Buzz" | i `mod` 5 == 0]) :: (Integral a) => a -> Option Text
 
 FizzBuzz Data.Semigroup> let opt_fizzbuzz = opt_fizz3 <> opt_buzz5
 
@@ -212,12 +212,12 @@ opt_fb :: (Show a, Integral a) => a -> Text
 Now we can do the exact same thing before, with code that is more sound.
 ```haskell
 FizzBuzz Data.Semigroup> map opt_fb [1 .. 15]
-["1","2","fizz","4","buzz","fizz","7","8","fizz","buzz","11","fizz","13","14","fizzbuzz"]
+["1","2","Fizz","4","Buzz","Fizz","7","8","Fizz","Buzz","11","Fizz","13","14","FizzBuzz"]
 ```
 Let's go over what we did.
 
-`:set -XOverloadedStrings` makes string literals polymorphic over the IsString type class.
-That is, you can write:[^1](https://www.schoolofhaskell.com/school/to-infinity-and-beyond/pick-of-the-week/guide-to-ghc-extensions/basic-syntax-extensions#overloadedstrings)
+`:set -X[OverloadedStrings](https://www.schoolofhaskell.com/school/to-infinity-and-beyond/pick-of-the-week/guide-to-ghc-extensions/basic-syntax-extensions#overloadedstrings)` makes string literals polymorphic over the IsString type class.
+That is, you can write:
 ```haskell
 a :: String
 a = "hello"
@@ -226,41 +226,48 @@ b :: Text
 b = "hello"
 ```
 
+The definition for `option` is:
+```haskell
+option :: b -> (a -> b) -> Option a -> b
+option n j (Option m) = maybe n j m
+```
+what this means is when m is a `Just` value the function j is evaluated, when m is a `Nothing` , n is the returned value.
+ 
 We worked out a solution to this problem entirely in the interpreter,
 here's what the function would look like:
 
 ```haskell
-fizzbuzz :: Integer -> String
-fizzbuzz i = fromMaybe (show i) $ getOption fizzbuzz'
+fizzbuzz :: Integer -> Text
+fizzbuzz i = option (show i) id $ opt_fizzbuzz i
   where
     fizzbuzz' =
-      ["fizz" | i `rem` 3 == 0] <>
-      ["buzz" | i `rem` 5 == 0]
+      ["Fizz " | i `rem` 3 == 0] <>
+      ["Buzz " | i `rem` 5 == 0]
 ```
 
 Ah, so we're done. No! In our hypothetical scenario, the client now
-wants `"bang!" :: String` to be returned when a number is a prime.
+wants `"BuzzFizz" :: Text` to be returned when a number is a prime.
 Not a problem. Here's what we would do in the interpreter:
 
 ```haskell
 FizzBuzz Data.Semigroup> :m + Data.Numbers.Primes
 FizzBuzz Data.Semigroup Data.Numbers.Primes>
-FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_isPrime = (\i -> ["bang!" | isPrime i]) :: (Integral a) => a -> Option String
+FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_isPrime = (\i -> ["BuzzFizz" | isPrime i]) :: (Integral a) => a -> Option String
 FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_fizzbuzz = opt_fizz3 <> opt_buzz5 <> opt_isPrime
-FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_fb = (\i -> fromMaybe (show i) $ getOption $ opt_fizzbuzz i)
+FizzBuzz Data.Semigroup Data.Numbers.Primes> let opt_fb = (\i -> option (show i) id $ opt_fizzbuzz i)
 FizzBuzz Data.Semigroup Data.Numbers.Primes> map opt_fb [1 .. 15]
-["1","bang!","fizzbang!","4","buzzbang!","fizz","bang!","8","fizz","buzz","bang!","fizz","bang!","14","fizzbuzz"]
+["1","BuzzFizz","FizzBuzzFizz","4","BuzzBuzzFizz","Fizz ","BuzzFizz","8","Fizz","Buzz","BuzzFizz","Fizz","BuzzFizz","14","FizzBuzz"]
 ```
 Adding the feature to `fizzbuzz` would look like this:
 
 ```haskell
-fizzbuzz :: Integer -> String
-fizzbuzz i = fromMaybe (show i) $ getOption fizzbuzz'
+fizzbuzz :: Integer -> Text
+fizzbuzz i = option (show i) id $ opt_fizzbuzz i
   where
     fizzbuzz' =
-      ["fizz " | i `rem` 3 == 0] <>
-      ["buzz " | i `rem` 5 == 0] <>
-      ["bang!" | isPrime i]
+      ["Fizz" | i `rem` 3 == 0] <>
+      ["Buzz" | i `rem` 5 == 0] <>
+      ["BuzzFizz" | isPrime i]
 ```
 Whew. Okay. Finally done defining fizzbuzz. We can compose more "if number has property x return string y" features as needed, and easily.
 
