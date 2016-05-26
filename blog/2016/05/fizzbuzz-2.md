@@ -213,13 +213,19 @@ Now we can do the exact same thing before, with code that is more sound.
 ```haskell
 FizzBuzz Data.Semigroup> map opt_fb [1 .. 15]
 ["1","2","fizz","4","buzz","fizz","7","8","fizz","buzz","11","fizz","13","14","fizzbuzz"]
-
+```
 Let's go over what we did.
 
-`:set -XOverloadedStrings` allows an automatic transformation from the terrible `String` type to the sane `Text` type.
+`:set -XOverloadedStrings` makes string literals polymorphic over the IsString type class.
+That is, you can write:[^1](https://www.schoolofhaskell.com/school/to-infinity-and-beyond/pick-of-the-week/guide-to-ghc-extensions/basic-syntax-extensions#overloadedstrings)
+```haskell
+a :: String
+a = "hello"
 
-
+b :: Text
+b = "hello"
 ```
+
 We worked out a solution to this problem entirely in the interpreter,
 here's what the function would look like:
 
