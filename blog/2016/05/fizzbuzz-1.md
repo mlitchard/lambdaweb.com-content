@@ -26,4 +26,4 @@ starting with Stack. Stack solves the problem of [dependency hell](http://stacko
 
 Now off you go to [Part 2](/blog/2015/11/fizzbuzz-2).
 
-<footer> This is part I of the Haskell As An Engineering Language Series. The introduction is <a href="/blog/2015/11/fizzbuzz-intro">Here</a></footer>
+<footer> This is part I of the Haskell As An Engineering Language Series. The introduction is <a href="/blog/2016/05/fizzbuzz-intro">Here</a></footer>

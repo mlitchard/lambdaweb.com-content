@@ -12,6 +12,6 @@ My personal project stems from my days of playing lpmuds. The innovation lpmud h
 
 This is what I want from a career opportunity right now: a chance to leverage my skills as they exist, to grow them and to learn new ones compatible with business goals. My expectation is that I will find myself using Haskell and Javascript together, and that sounds exciting. But for my personal project taking up my spare time, I'd be sorting that out right now. But I have no doubts as to my ability to get up to speed with Javascript best practices, should the need arise.
 
-At the same time, I'm open to other opportunities. I'm interested in working with people that need no convincing that Haskell is a pragmatic choice for many domains when the goals are quick ROI and stability. You already know this, and so do I. Let's get to work.
+At the same time, I'm open to other opportunities. I'm interested in working with people who share my passion for the craft. Let's get to work.
 
    

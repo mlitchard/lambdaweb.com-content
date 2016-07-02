@@ -216,7 +216,7 @@ FizzBuzz Data.Semigroup> map opt_fb [1 .. 15]
 ```
 Let's go over what we did.
 
-`:set -X[OverloadedStrings](https://www.schoolofhaskell.com/school/to-infinity-and-beyond/pick-of-the-week/guide-to-ghc-extensions/basic-syntax-extensions#overloadedstrings)` makes string literals polymorphic over the IsString type class.
+`:set -X [OverloadedStrings](https://www.schoolofhaskell.com/school/to-infinity-and-beyond/pick-of-the-week/guide-to-ghc-extensions/basic-syntax-extensions#overloadedstrings)` makes string literals polymorphic over the IsString type class.
 That is, you can write:
 ```haskell
 a :: String
@@ -271,4 +271,4 @@ fizzbuzz i = option (show i) id $ opt_fizzbuzz i
 ```
 Whew. Okay. Finally done defining fizzbuzz. We can compose more "if number has property x return string y" features as needed, and easily.
 
-<footer> This is part II of the Haskell As An Engineering Language Series. Part I is <a href="/blog/2015/11/fizzbuzz-1">Here</a></footer>
+<footer> This is part II of the Haskell As An Engineering Language Series. Part I is <a href="/blog/2016/05/fizzbuzz-1">Here</a></footer>
